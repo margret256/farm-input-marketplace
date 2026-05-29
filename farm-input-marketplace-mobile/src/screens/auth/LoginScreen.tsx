@@ -36,7 +36,7 @@ export function LoginScreen() {
   }
 
   return (
-    <AuthLayout centered>
+    <AuthLayout>
       <View style={[styles.card, marketplaceShadows.card]}>
         <View style={styles.logoWrap}>
           <LogoMark size={78} />
@@ -72,6 +72,7 @@ export function LoginScreen() {
             <Text style={styles.forgotText}>Forgot Password?</Text>
           </Pressable>
         </View>
+
         <MarketplaceButton
           title="Login"
           icon="log-in-outline"
@@ -79,18 +80,20 @@ export function LoginScreen() {
           onPress={handleLogin}
           style={styles.loginButton}
         />
+
         <View style={styles.dividerRow}>
           <View style={styles.divider} />
           <Text style={styles.orText}>OR</Text>
           <View style={styles.divider} />
         </View>
+
         <MarketplaceButton
           title="Login with Biometrics"
-          icon="finger-print-outline"
           iconPosition="left"
           variant="outlined"
           style={styles.biometricButton}
         />
+
         <View style={styles.bottomLink}>
           <Text style={styles.bottomText}>{"Don't have an account? "}</Text>
           <Link href="/auth/register" asChild>
@@ -107,8 +110,8 @@ export function LoginScreen() {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    padding: 20,
+    borderRadius: 16,
+    padding: 24,
     marginHorizontal: 0,
     alignItems: 'stretch',
   },
@@ -120,7 +123,7 @@ const styles = StyleSheet.create({
   },
   title: {
     color: '#000000',
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: '900',
     textAlign: 'center',
     letterSpacing: 0,
@@ -128,8 +131,8 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     color: marketplaceColors.inkSoft,
-    fontSize: 10,
-    lineHeight: 15,
+    fontSize: 13,
+    lineHeight: 18,
     textAlign: 'center',
     marginTop: 7,
     letterSpacing: 0,
@@ -150,27 +153,29 @@ const styles = StyleSheet.create({
     gap: 7,
   },
   checkbox: {
-    width: 15,
-    height: 15,
-    borderRadius: 2,
-    borderWidth: 1,
+    width: 16,
+    height: 16,
+    borderRadius: 3,
+    borderWidth: 1.5,
     borderColor: marketplaceColors.inkMuted,
   },
   rememberText: {
     color: marketplaceColors.ink,
-    fontSize: 9,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '600',
   },
   forgotText: {
     color: marketplaceColors.primaryDark,
-    fontSize: 9,
-    fontWeight: '900',
+    fontSize: 13,
+    fontWeight: '700',
   },
   loginButton: {
     marginTop: 25,
-    minHeight: 48,
-    backgroundColor: '#0B6E21',
-    borderColor: '#0B6E21',
+    minHeight: 52,
+    borderRadius: 10,
+    backgroundColor: '#1A5E20',
+    borderColor: '#1A5E20',
+    width: '100%',
   },
   dividerRow: {
     flexDirection: 'row',
@@ -185,11 +190,16 @@ const styles = StyleSheet.create({
   },
   orText: {
     color: marketplaceColors.inkMuted,
-    fontSize: 9,
-    fontWeight: '800',
+    fontSize: 12,
+    fontWeight: '700',
   },
   biometricButton: {
-    borderColor: '#D8DED1',
+    minHeight: 52,
+    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
+    borderColor: '#D0D5C8',
+    borderWidth: 1.5,
+    width: '100%',
   },
   bottomLink: {
     flexDirection: 'row',
@@ -199,12 +209,12 @@ const styles = StyleSheet.create({
   },
   bottomText: {
     color: marketplaceColors.inkMuted,
-    fontSize: 11,
-    fontWeight: '700',
+    fontSize: 13,
+    fontWeight: '600',
   },
   signUpText: {
-    color: marketplaceColors.secondary,
-    fontSize: 11,
-    fontWeight: '900',
+    color: '#C0580A',
+    fontSize: 13,
+    fontWeight: '800',
   },
 });
