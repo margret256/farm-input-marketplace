@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 26,
     minHeight: 48,
+    width: '100%',
   },
   helpRow: {
     flexDirection: 'row',
