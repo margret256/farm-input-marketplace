@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 0,
+    width: '100%',
   },
   backLink: {
     alignItems: 'center',
