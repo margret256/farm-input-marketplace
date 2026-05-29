@@ -67,12 +67,11 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 18,
     width: '100%',
-    overflow: 'hidden',
   },
   primary: {
-    backgroundColor: '#0B6E21',
+    backgroundColor: marketplaceColors.primary,
     borderWidth: 1,
-    borderColor: '#0B6E21',
+    borderColor: marketplaceColors.primary,
   },
   secondary: {
     backgroundColor: marketplaceColors.card,
