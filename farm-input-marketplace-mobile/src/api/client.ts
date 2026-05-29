@@ -1,4 +1,5 @@
-import { create } from 'axios';
+﻿import { create } from 'axios';
+console.log('EXPO_PUBLIC_API_URL:', process.env.EXPO_PUBLIC_API_URL);
 
 export const apiClient = create({
   baseURL: process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000/api',
@@ -16,3 +17,4 @@ export function setAuthToken(token?: string) {
 
   delete apiClient.defaults.headers.common.Authorization;
 }
+
