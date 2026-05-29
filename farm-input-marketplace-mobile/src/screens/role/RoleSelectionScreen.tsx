@@ -1,10 +1,9 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen } from '@/components/marketplace/AppScreen';
 import { MarketplaceButton } from '@/components/ui/marketplace-button';
-import { appImages } from '@/constants/mock-marketplace';
 import { marketplaceColors, marketplaceShadows } from '@/constants/marketplace';
 
 export function RoleSelectionScreen() {
@@ -12,11 +11,13 @@ export function RoleSelectionScreen() {
     <AppScreen notificationDot title="AgroMarket">
       <Text style={styles.title}>Who are you?</Text>
       <Text style={styles.subtitle}>Select your primary role to customize your AgroMarket experience.</Text>
-      <View style={[styles.roleCard, styles.selectedCard, marketplaceShadows.card]}>
+      <Pressable style={[styles.roleCard, styles.selectedCard, marketplaceShadows.card]} onPress={() => router.replace('/auth/login')}>
+        <View style={styles.roleIconPlaceholder}>
+          <Ionicons name="leaf-outline" size={60} color={marketplaceColors.primary} />
+        </View>
         <View style={styles.check}>
           <Ionicons name="checkmark" size={14} color="#FFFFFF" />
         </View>
-        <Image source={appImages.farmStatus} style={styles.roleImage} />
         <View style={styles.roleFooter}>
           <View>
             <Text style={styles.roleTitle}>Farmer</Text>
@@ -24,9 +25,11 @@ export function RoleSelectionScreen() {
           </View>
           <View style={styles.radio} />
         </View>
-      </View>
-      <View style={[styles.roleCard, marketplaceShadows.card]}>
-        <Image source={appImages.agroHub} style={styles.roleImage} />
+      </Pressable>
+      <Pressable style={[styles.roleCard, marketplaceShadows.card]} onPress={() => router.replace('/auth/login')}>
+        <View style={styles.roleIconPlaceholder}>
+          <MaterialCommunityIcons name="storefront-outline" size={60} color={marketplaceColors.primaryDark} />
+        </View>
         <View style={styles.roleFooter}>
           <View>
             <Text style={styles.roleTitle}>Dealer</Text>
@@ -34,11 +37,11 @@ export function RoleSelectionScreen() {
           </View>
           <View style={styles.emptyRadio} />
         </View>
-      </View>
+      </Pressable>
       <MarketplaceButton
         title="Continue"
         icon="arrow-forward"
-        onPress={() => router.replace('/home')}
+        onPress={() => router.replace('/auth/login')}
         style={styles.button}
       />
       <View style={styles.brandRow}>
@@ -70,10 +73,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E0E7DA',
     marginTop: 12,
+    width: '100%',
   },
   selectedCard: {
     borderColor: marketplaceColors.primary,
     borderWidth: 2,
+  },
+  roleIconPlaceholder: {
+    width: '100%',
+    height: 214,
+    backgroundColor: '#EAF4E8',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   check: {
     position: 'absolute',
@@ -86,12 +99,6 @@ const styles = StyleSheet.create({
     zIndex: 2,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  roleImage: {
-    width: '100%',
-    height: 214,
-    resizeMode: 'cover',
-    borderRadius: 8,
   },
   roleFooter: {
     flexDirection: 'row',
@@ -128,14 +135,14 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 18,
     minHeight: 48,
+    width: '100%',
   },
   brandRow: {
-    position: 'absolute',
-    top: 8,
-    left: 26,
+    marginTop: 32,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
+    alignSelf: 'center',
   },
   brandText: {
     color: marketplaceColors.primaryDark,
