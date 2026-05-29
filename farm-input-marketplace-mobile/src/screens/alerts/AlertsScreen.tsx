@@ -1,49 +1,149 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, StaticScreen } from '@/components/marketplace/AppScreen';
 import { FloatingTabBar } from '@/components/marketplace/FloatingTabBar';
-import { alertItems } from '@/constants/mock-marketplace';
-import { marketplaceColors, marketplaceShadows } from '@/constants/marketplace';
+import { appImages } from '@/constants/mock-marketplace';
+import { marketplaceColors } from '@/constants/marketplace';
+
+type Alert = {
+  id: string;
+  title: string;
+  message: string;
+  time: string;
+  type: 'order' | 'payment' | 'offer' | 'profile';
+  unread?: boolean;
+  image?: boolean;
+  read?: boolean;
+};
+
+const alerts: Alert[] = [
+  {
+    id: '1',
+    title: 'Order Confirmed',
+    message: 'Your order #AG-8821 for 50kg Organic Fertilizer has been confirmed by the dealer.',
+    time: '2m ago',
+    type: 'order',
+    unread: true,
+  },
+  {
+    id: '2',
+    title: 'Payment Successful',
+    message: 'Payment of $450.00 for the latest seed inventory was successfully processed.',
+    time: '1h ago',
+    type: 'payment',
+    read: true,
+  },
+  {
+    id: '3',
+    title: 'Flash Offer: 15% OFF',
+    message: 'Get exclusive discounts on high-yield corn seeds for the next 24 hours. Don\'t miss out!',
+    time: '4h ago',
+    type: 'offer',
+    image: true,
+  },
+  {
+    id: '4',
+    title: 'Profile Updated',
+    message: 'Your farm location and dealer preferences were updated successfully from your dashboard.',
+    time: 'Yesterday',
+    type: 'profile',
+  },
+];
+
+const iconConfig: Record<Alert['type'], { bg: string; icon: string; color: string }> = {
+  order: { bg: '#1A5E20', icon: 'receipt-outline', color: '#FFFFFF' },
+  payment: { bg: '#F57C00', icon: 'wallet-outline', color: '#FFFFFF' },
+  offer: { bg: '#FFF3CD', icon: 'pricetag-outline', color: '#F57C00' },
+  profile: { bg: '#F0F0F0', icon: 'settings-outline', color: '#555' },
+};
+
+const chips = ['All', 'Orders', 'Payments', 'Offers'];
 
 export function AlertsScreen() {
   return (
     <StaticScreen>
       <AppScreen notificationDot title="AgroMarket">
-        <View style={styles.titleRow}>
+        {/* Header */}
+        <View style={styles.headerRow}>
           <View>
-            <Text style={styles.title}>Alerts</Text>
-            <Text style={styles.subtitle}>Stay updated on your farm activity</Text>
+            <Text style={styles.heading}>Alerts</Text>
+            <Text style={styles.subheading}>Stay updated on your farm activity</Text>
           </View>
-          <Text style={styles.markAll}>Mark all as read</Text>
+          <Pressable>
+            <Text style={styles.markAll}>Mark all as read</Text>
+          </Pressable>
         </View>
-        <View style={styles.filterRow}>
-          {['All', 'Orders', 'Payments', 'Offers'].map((label, index) => (
-            <Text key={label} style={[styles.filter, index === 0 && styles.activeFilter]}>{label}</Text>
+
+        {/* Filter chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.chipScroll}
+          contentContainerStyle={styles.chipRow}>
+          {chips.map((chip, i) => (
+            <Pressable key={chip} style={[styles.chip, i === 0 && styles.activeChip]}>
+              <Text style={[styles.chipText, i === 0 && styles.activeChipText]}>{chip}</Text>
+            </Pressable>
           ))}
-        </View>
-        <View style={styles.alertList}>
-          {alertItems.map((alert) => (
-            <View key={alert.title} style={[styles.alertCard, alert.unread && styles.unread, marketplaceShadows.card]}>
-              <View style={[styles.alertIcon, { backgroundColor: alert.color }]}>
-                <Ionicons name={alert.icon} size={29} color={alert.color === '#FBC02D' ? '#101710' : '#FFFFFF'} />
-              </View>
-              <View style={styles.alertBody}>
-                <View style={styles.alertTop}>
-                  <Text style={styles.alertTitle}>{alert.title}</Text>
-                  <Text style={styles.time}>{alert.time}</Text>
+        </ScrollView>
+
+        {/* Alert cards */}
+        <View style={styles.list}>
+          {alerts.map((alert) => {
+            const cfg = iconConfig[alert.type];
+            return (
+              <View
+                key={alert.id}
+                style={[styles.card, alert.unread && styles.unreadCard]}>
+                {/* Unread left bar */}
+                {alert.unread && <View style={styles.unreadBar} />}
+
+                <View style={styles.cardInner}>
+                  {/* Icon */}
+                  <View style={[styles.iconWrap, { backgroundColor: cfg.bg }]}>
+                    <Ionicons name={cfg.icon as any} size={22} color={cfg.color} />
+                  </View>
+
+                  {/* Content */}
+                  <View style={styles.cardContent}>
+                    <View style={styles.cardTopRow}>
+                      <Text style={styles.cardTitle}>{alert.title}</Text>
+                      <Text style={styles.cardTime}>{alert.time}</Text>
+                    </View>
+                    <Text style={styles.cardMessage}>{alert.message}</Text>
+
+                    {/* Offer image */}
+                    {alert.image && (
+                      <View style={styles.offerImageWrap}>
+                        <Image
+                          source={appImages.smartFarming}
+                          style={styles.offerImage}
+                        />
+                        <View style={styles.offerOverlay}>
+                          <Text style={styles.offerOverlayText}>Limited time harvest deal</Text>
+                        </View>
+                      </View>
+                    )}
+
+                    {/* Actions */}
+                    <View style={styles.actions}>
+                      {alert.unread && (
+                        <Pressable style={styles.actionBtn}>
+                          <Ionicons name="checkmark-done-outline" size={14} color={marketplaceColors.primary} />
+                          <Text style={styles.markReadText}>Mark as read</Text>
+                        </Pressable>
+                      )}
+                      <Pressable style={styles.actionBtn}>
+                        <Ionicons name="trash-outline" size={14} color="#D32F2F" />
+                        <Text style={styles.deleteText}>Delete</Text>
+                      </Pressable>
+                    </View>
+                  </View>
                 </View>
-                <Text style={styles.alertText}>{alert.body}</Text>
-                {alert.image ? (
-                  <Image source={alert.image} style={styles.alertImage} />
-                ) : null}
-                <View style={styles.actions}>
-                  {alert.unread ? <Text style={styles.readAction}>Mark as read</Text> : null}
-                  <Text style={styles.deleteAction}>Delete</Text>
-                </View>
               </View>
-            </View>
-          ))}
+            );
+          })}
         </View>
       </AppScreen>
       <FloatingTabBar active="alerts" />
@@ -52,119 +152,156 @@ export function AlertsScreen() {
 }
 
 const styles = StyleSheet.create({
-  titleRow: {
+  headerRow: {
     flexDirection: 'row',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    gap: 14,
+    marginBottom: 16,
   },
-  title: {
-    color: '#101710',
-    fontSize: 34,
+  heading: {
+    fontSize: 26,
     fontWeight: '900',
+    color: '#101710',
   },
-  subtitle: {
-    color: marketplaceColors.inkSoft,
-    fontSize: 19,
-    marginTop: 4,
+  subheading: {
+    fontSize: 12,
+    color: '#7A8A72',
+    marginTop: 2,
   },
   markAll: {
+    fontSize: 12,
+    fontWeight: '700',
     color: marketplaceColors.primaryDark,
-    fontSize: 16,
-    fontWeight: '900',
-    paddingBottom: 8,
+    marginTop: 6,
   },
-  filterRow: {
+  chipScroll: {
+    marginBottom: 16,
+  },
+  chipRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 34,
-    marginBottom: 20,
+    gap: 10,
+    paddingRight: 16,
   },
-  filter: {
-    backgroundColor: '#E9EFE4',
-    color: marketplaceColors.inkSoft,
-    borderRadius: 22,
-    overflow: 'hidden',
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    fontSize: 17,
-    fontWeight: '800',
-    borderWidth: 1,
-    borderColor: '#BAC8B4',
+  chip: {
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#E8EDE3',
   },
-  activeFilter: {
+  activeChip: {
     backgroundColor: marketplaceColors.primaryDark,
-    borderColor: marketplaceColors.primaryDark,
+  },
+  chipText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#5A6A52',
+  },
+  activeChipText: {
     color: '#FFFFFF',
   },
-  alertList: {
-    gap: 18,
+  list: {
+    gap: 12,
   },
-  alertCard: {
+  card: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 22,
-    borderWidth: 1,
-    borderColor: '#DEE7D9',
-    flexDirection: 'row',
-    gap: 20,
-  },
-  unread: {
-    borderLeftWidth: 5,
-    borderLeftColor: marketplaceColors.primaryDark,
-  },
-  alertIcon: {
-    width: 64,
-    height: 64,
     borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#E1E8DA',
+    overflow: 'hidden',
+    flexDirection: 'row',
+  },
+  unreadCard: {
+    borderColor: '#C8DFC0',
+  },
+  unreadBar: {
+    width: 4,
+    backgroundColor: marketplaceColors.primary,
+  },
+  cardInner: {
+    flex: 1,
+    flexDirection: 'row',
+    padding: 14,
+    gap: 12,
+  },
+  iconWrap: {
+    width: 46,
+    height: 46,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
-  alertBody: {
+  cardContent: {
     flex: 1,
   },
-  alertTop: {
+  cardTopRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 10,
+    alignItems: 'flex-start',
+    gap: 8,
   },
-  alertTitle: {
-    flex: 1,
-    color: '#101710',
-    fontSize: 22,
-    fontWeight: '900',
-  },
-  time: {
-    color: marketplaceColors.inkSoft,
-    fontSize: 16,
+  cardTitle: {
+    fontSize: 14,
     fontWeight: '800',
+    color: '#101710',
+    flex: 1,
   },
-  alertText: {
-    color: marketplaceColors.inkSoft,
-    fontSize: 20,
-    lineHeight: 29,
-    marginTop: 12,
+  cardTime: {
+    fontSize: 11,
+    color: '#9AA890',
+    fontWeight: '600',
+    flexShrink: 0,
   },
-  alertImage: {
-    width: '100%',
-    height: 120,
+  cardMessage: {
+    fontSize: 12,
+    color: '#5A6A52',
+    lineHeight: 17,
+    marginTop: 4,
+    fontWeight: '500',
+  },
+  offerImageWrap: {
+    marginTop: 10,
     borderRadius: 10,
+    overflow: 'hidden',
+    height: 100,
+  },
+  offerImage: {
+    width: '100%',
+    height: '100%',
     resizeMode: 'cover',
-    marginTop: 20,
+  },
+  offerOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  offerOverlayText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
   },
   actions: {
     flexDirection: 'row',
-    gap: 22,
-    marginTop: 24,
+    gap: 16,
+    marginTop: 10,
   },
-  readAction: {
-    color: marketplaceColors.primaryDark,
-    fontSize: 16,
-    fontWeight: '900',
+  actionBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
   },
-  deleteAction: {
-    color: '#C62828',
-    fontSize: 16,
-    fontWeight: '900',
+  markReadText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: marketplaceColors.primary,
+  },
+  deleteText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#D32F2F',
   },
 });
