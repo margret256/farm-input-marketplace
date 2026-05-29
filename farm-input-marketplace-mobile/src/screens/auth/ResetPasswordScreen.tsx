@@ -99,6 +99,7 @@ const styles = StyleSheet.create({
   },
   saveButton: {
     marginTop: 4,
+    width: '100%',
   },
   warningBox: {
     flexDirection: 'row',
