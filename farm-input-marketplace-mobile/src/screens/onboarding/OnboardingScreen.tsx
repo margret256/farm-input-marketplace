@@ -107,7 +107,7 @@ function WelcomeSlide({ activeIndex, onNext }: { activeIndex: number; onNext: ()
           <FeatureCard label={slide.secondaryFeature} icon="truck-delivery-outline" color="orange" />
         </View>
         <MarketplaceButton title="Next" icon="arrow-forward" onPress={onNext} style={styles.fullButton} />
-        <Pressable onPress={() => router.replace('/auth/login')} style={styles.skipButton}>
+        <Pressable onPress={() => router.replace('/role-selection')} style={styles.skipButton}>
           <Text style={styles.skipText}>Skip</Text>
         </Pressable>
       </View>
@@ -127,7 +127,7 @@ function CompareSlide({ activeIndex, onNext }: { activeIndex: number; onNext: ()
       <Text style={styles.titleCenter}>{slide.title}</Text>
       <Text style={styles.bodyCenter}>{slide.body}</Text>
       <MarketplaceButton title="Next" icon="arrow-forward" onPress={onNext} style={styles.compareButton} />
-      <Pressable onPress={() => router.replace('/auth/login')} style={styles.skipButtonLarge}>
+      <Pressable onPress={() => router.replace('/role-selection')} style={styles.skipButtonLarge}>
         <Text style={styles.skipText}>Skip</Text>
       </Pressable>
       <View style={styles.tinyFooter}>
@@ -168,11 +168,11 @@ function DeliverySlide({ activeIndex }: { activeIndex: number }) {
         <MarketplaceButton
           title="Get Started"
           icon="arrow-forward"
-          onPress={() => router.replace('/auth/login')}
+          onPress={() => router.replace('/role-selection')}
           style={styles.deliveryButton}
         />
-        <Pressable onPress={() => router.replace('/auth/login')} style={styles.loginLink}>
-          <Text style={styles.loginText}>Already have an account? Log In</Text>
+        <Pressable onPress={() => router.replace('/role-selection')} style={styles.loginLink}>
+          <Text style={styles.loginText}>Already have an account? Choose Role</Text>
         </Pressable>
       </SafeAreaView>
     </View>
@@ -307,6 +307,7 @@ const styles = StyleSheet.create({
   },
   fullButton: {
     marginTop: 18,
+    width: '100%',
   },
   skipButton: {
     alignItems: 'center',
