@@ -44,6 +44,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   inner: {
-    flex: 1,
+    width: '100%',
   },
 });
