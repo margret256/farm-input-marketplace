@@ -9,8 +9,10 @@ export default function TabLayout() {
       }}>
       <Tabs.Screen name="home" />
       <Tabs.Screen name="market" />
+      <Tabs.Screen name="cart" />
       <Tabs.Screen name="orders" />
       <Tabs.Screen name="alerts" />
+      <Tabs.Screen name="wishlist" />
       <Tabs.Screen name="profile" />
     </Tabs>
   );
