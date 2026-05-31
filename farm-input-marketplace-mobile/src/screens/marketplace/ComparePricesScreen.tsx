@@ -10,7 +10,7 @@ import { marketplaceColors, marketplaceShadows } from '@/constants/marketplace';
 export function ComparePricesScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <AppScreen back cart title="Compare Prices">
+      <AppScreen back title="Compare Prices">
         <View style={[styles.productSummary, marketplaceShadows.card]}>
           <Image source={appImages.betterYields} style={styles.summaryImage} />
           <View style={styles.summaryBody}>

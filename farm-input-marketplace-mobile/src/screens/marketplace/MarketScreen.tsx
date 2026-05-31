@@ -10,7 +10,7 @@ import { marketplaceColors } from '@/constants/marketplace';
 export function MarketScreen() {
   return (
     <StaticScreen>
-      <AppScreen cart notificationDot title="AgroMarket">
+      <AppScreen title="AgroMarket">
         <View style={styles.searchRow}>
           <Ionicons name="search" size={17} color={marketplaceColors.inkMuted} />
           <Text style={styles.searchText}>Search inputs, seeds, tools...</Text>

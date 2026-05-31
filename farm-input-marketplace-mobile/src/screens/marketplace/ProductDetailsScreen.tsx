@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets, SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppScreen } from '@/components/marketplace/AppScreen';
 import { appImages } from '@/constants/mock-marketplace';
@@ -14,17 +15,23 @@ const instructions = [
 ];
 
 export function ProductDetailsScreen() {
+  const insets = useSafeAreaInsets();
+  const [wishlisted, setWishlisted] = useState(false);
+  const [inCart, setInCart] = useState(false);
+
+  const bottomBarHeight = 68 + insets.bottom;
+
   return (
     <SafeAreaView style={styles.safeArea}>
-      <AppScreen back cart title="AgroMarket" padded={false}>
+      <AppScreen back title="AgroMarket" padded={false}>
         <Image source={appImages.betterYields} style={styles.hero} />
-        <View style={styles.body}>
+        <View style={[styles.body, { paddingBottom: bottomBarHeight + 16 }]}>
           <View style={styles.titleRow}>
             <View style={styles.titleBlock}>
-              <Text style={styles.title}>Premium Urea Fertilizer{'\n'}(46-0-0)</Text>
+              <Text style={styles.title}>Premium Urea Fertilizer (46-0-0)</Text>
               <View style={styles.starRow}>
                 {[0, 1, 2, 3, 4].map((star) => (
-                  <Ionicons key={star} name="star" size={13} color="#8A5A00" />
+                  <Ionicons key={star} name="star" size={11} color="#8A5A00" />
                 ))}
                 <Text style={styles.reviewText}>4.8 (120 reviews)</Text>
               </View>
@@ -32,12 +39,14 @@ export function ProductDetailsScreen() {
             </View>
             <Text style={styles.stock}>In{'\n'}Stock</Text>
           </View>
+
           <View style={styles.descriptionCard}>
             <Text style={styles.cardLabel}>DESCRIPTION</Text>
             <Text style={styles.description}>
               High-quality nitrogen fertilizer for rapid crop growth and healthy yields. Specifically formulated for East African soil conditions to maximize grain development.
             </Text>
           </View>
+
           <Text style={styles.sectionTitle}>Usage Instructions</Text>
           {instructions.map((item, index) => (
             <View key={item[0]} style={styles.instructionRow}>
@@ -48,14 +57,16 @@ export function ProductDetailsScreen() {
               </View>
             </View>
           ))}
+
           <View style={[styles.dealerCard, marketplaceShadows.card]}>
             <Image source={appImages.agroHub} style={styles.dealerImage} />
             <View style={styles.dealerInfo}>
               <Text style={styles.dealerName}>Agro-Input Dealer UG</Text>
               <Text style={styles.dealerMeta}>Kampala, Central Region</Text>
             </View>
-            <Ionicons name="chatbox-outline" size={23} color={marketplaceColors.primaryDark} />
+            <Ionicons name="chatbox-outline" size={20} color={marketplaceColors.primaryDark} />
           </View>
+
           <View style={styles.ratingsRow}>
             <View>
               <Text style={styles.bigRating}>4.8</Text>
@@ -72,11 +83,12 @@ export function ProductDetailsScreen() {
               ))}
             </View>
           </View>
+
           <View style={styles.reviewCard}>
             <Text style={styles.reviewer}>John Musoke</Text>
             <View style={styles.reviewStarRow}>
               {[0, 1, 2, 3, 4].map((star) => (
-                <Ionicons key={star} name="star" size={12} color="#8A5A00" />
+                <Ionicons key={star} name="star" size={10} color="#8A5A00" />
               ))}
             </View>
             <Text style={styles.reviewBody}>
@@ -88,11 +100,27 @@ export function ProductDetailsScreen() {
           </Pressable>
         </View>
       </AppScreen>
-      <View style={styles.bottomBar}>
-        <Ionicons name="heart-outline" size={25} color={marketplaceColors.primaryDark} />
-        <Pressable onPress={() => router.push('/cart')} style={styles.outlineButton}>
-          <Text style={styles.outlineText}>Add to Cart</Text>
+
+      <View style={[styles.bottomBar, { paddingBottom: insets.bottom || 10, height: bottomBarHeight }]}>
+        <Pressable
+          style={styles.heartButton}
+          onPress={() => setWishlisted((v) => !v)}
+          accessibilityLabel={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}>
+          <Ionicons
+            name={wishlisted ? 'heart' : 'heart-outline'}
+            size={22}
+            color={wishlisted ? '#D84315' : marketplaceColors.primaryDark}
+          />
         </Pressable>
+
+        <Pressable
+          onPress={() => { setInCart(true); router.push('/cart'); }}
+          style={[styles.outlineButton, inCart && styles.outlineButtonActive]}>
+          <Text style={[styles.outlineText, inCart && styles.outlineTextActive]}>
+            {inCart ? '✓ In Cart' : 'Add to Cart'}
+          </Text>
+        </Pressable>
+
         <Pressable onPress={() => router.push('/checkout')} style={styles.buyButton}>
           <Text style={styles.buyText}>Buy Now</Text>
         </Pressable>
@@ -103,248 +131,88 @@ export function ProductDetailsScreen() {
 
 const styles = StyleSheet.create({
   safeArea: { flex: 1, backgroundColor: marketplaceColors.screen },
-  hero: {
-    width: '100%',
-    height: 330,
-    resizeMode: 'cover',
-  },
-  body: {
-    padding: 24,
-    paddingBottom: 130,
-  },
-  titleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  titleBlock: { flex: 1 },
-  title: {
-    color: '#101710',
-    fontSize: 25,
-    lineHeight: 30,
-    fontWeight: '900',
-  },
-  starRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 2,
-    marginTop: 10,
-  },
-  reviewText: {
-    color: marketplaceColors.inkSoft,
-    fontSize: 11,
-  },
-  price: {
-    color: '#B45500',
-    fontSize: 29,
-    fontWeight: '900',
-    marginTop: 10,
-  },
+  hero: { width: '100%', height: 160, resizeMode: 'cover' },
+  body: { padding: 14 },
+  titleRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
+  titleBlock: { flex: 1, paddingRight: 10 },
+  title: { color: '#101710', fontSize: 18, lineHeight: 24, fontWeight: '900' },
+  starRow: { flexDirection: 'row', alignItems: 'center', gap: 2, marginTop: 5 },
+  reviewText: { color: marketplaceColors.inkSoft, fontSize: 10 },
+  price: { color: '#B45500', fontSize: 20, fontWeight: '900', marginTop: 5 },
   stock: {
     color: marketplaceColors.primaryDark,
     backgroundColor: '#EAF4E8',
     borderRadius: 6,
     overflow: 'hidden',
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
     textAlign: 'center',
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '900',
   },
-  descriptionCard: {
-    backgroundColor: '#F0F5EA',
-    borderRadius: 11,
-    padding: 18,
-    marginTop: 18,
-  },
-  cardLabel: {
-    color: marketplaceColors.inkMuted,
-    fontSize: 10,
-    fontWeight: '900',
-    letterSpacing: 1,
-  },
-  description: {
-    color: marketplaceColors.inkSoft,
-    fontSize: 14,
-    lineHeight: 21,
-    marginTop: 8,
-  },
-  sectionTitle: {
-    color: '#101710',
-    fontSize: 20,
-    fontWeight: '900',
-    marginTop: 28,
-    marginBottom: 14,
-  },
-  instructionRow: {
-    flexDirection: 'row',
-    gap: 14,
-    marginBottom: 16,
-  },
+  descriptionCard: { backgroundColor: '#F0F5EA', borderRadius: 10, padding: 12, marginTop: 12 },
+  cardLabel: { color: marketplaceColors.inkMuted, fontSize: 9, fontWeight: '900', letterSpacing: 1 },
+  description: { color: marketplaceColors.inkSoft, fontSize: 12, lineHeight: 18, marginTop: 5 },
+  sectionTitle: { color: '#101710', fontSize: 15, fontWeight: '900', marginTop: 16, marginBottom: 10 },
+  instructionRow: { flexDirection: 'row', gap: 10, marginBottom: 10 },
   step: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    width: 22, height: 22, borderRadius: 11,
     backgroundColor: marketplaceColors.primary,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    lineHeight: 28,
-    fontWeight: '900',
+    color: '#FFFFFF', textAlign: 'center', lineHeight: 22, fontWeight: '900', fontSize: 11,
   },
   instructionText: { flex: 1 },
-  instructionTitle: {
-    color: '#101710',
-    fontSize: 12,
-    fontWeight: '900',
-  },
-  instructionBody: {
-    color: marketplaceColors.inkSoft,
-    fontSize: 12,
-    lineHeight: 17,
-    marginTop: 2,
-  },
+  instructionTitle: { color: '#101710', fontSize: 12, fontWeight: '900' },
+  instructionBody: { color: marketplaceColors.inkSoft, fontSize: 11, lineHeight: 15, marginTop: 2 },
   dealerCard: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: '#DDE6D6',
-    padding: 13,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginTop: 16,
+    backgroundColor: '#FFFFFF', borderRadius: 12, borderWidth: 1,
+    borderColor: '#DDE6D6', padding: 10, flexDirection: 'row',
+    alignItems: 'center', gap: 10, marginTop: 12,
   },
-  dealerImage: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-  },
+  dealerImage: { width: 36, height: 36, borderRadius: 18 },
   dealerInfo: { flex: 1 },
-  dealerName: {
-    color: '#101710',
-    fontSize: 13,
-    fontWeight: '900',
-  },
-  dealerMeta: {
-    color: marketplaceColors.inkMuted,
-    fontSize: 10,
-    marginTop: 2,
-  },
-  ratingsRow: {
-    flexDirection: 'row',
-    gap: 25,
-    marginTop: 22,
-    alignItems: 'center',
-  },
-  bigRating: {
-    color: '#101710',
-    fontSize: 40,
-    fontWeight: '900',
-  },
-  outOf: {
-    color: marketplaceColors.inkMuted,
-    fontSize: 10,
-    fontWeight: '800',
-  },
-  ratingBars: { flex: 1, gap: 6 },
-  barRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  barLabel: {
-    color: marketplaceColors.inkSoft,
-    fontSize: 10,
-    width: 10,
-  },
-  barTrack: {
-    flex: 1,
-    height: 5,
-    borderRadius: 4,
-    backgroundColor: '#DDE6D6',
-  },
-  barFill: {
-    height: 5,
-    borderRadius: 4,
-    backgroundColor: marketplaceColors.primary,
-  },
+  dealerName: { color: '#101710', fontSize: 12, fontWeight: '900' },
+  dealerMeta: { color: marketplaceColors.inkMuted, fontSize: 10, marginTop: 2 },
+  ratingsRow: { flexDirection: 'row', gap: 16, marginTop: 14, alignItems: 'center' },
+  bigRating: { color: '#101710', fontSize: 30, fontWeight: '900' },
+  outOf: { color: marketplaceColors.inkMuted, fontSize: 9, fontWeight: '800' },
+  ratingBars: { flex: 1, gap: 4 },
+  barRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  barLabel: { color: marketplaceColors.inkSoft, fontSize: 9, width: 9 },
+  barTrack: { flex: 1, height: 4, borderRadius: 4, backgroundColor: '#DDE6D6' },
+  barFill: { height: 4, borderRadius: 4, backgroundColor: marketplaceColors.primary },
   reviewCard: {
-    backgroundColor: '#EAF4E8',
-    borderLeftWidth: 4,
-    borderLeftColor: marketplaceColors.primary,
-    borderRadius: 10,
-    padding: 16,
-    marginTop: 18,
+    backgroundColor: '#EAF4E8', borderLeftWidth: 3,
+    borderLeftColor: marketplaceColors.primary, padding: 12, marginTop: 14,
   },
-  reviewer: {
-    color: '#101710',
-    fontSize: 12,
-    fontWeight: '900',
-  },
-  reviewStarRow: {
-    flexDirection: 'row',
-    gap: 2,
-    marginTop: 4,
-  },
-  reviewBody: {
-    color: marketplaceColors.inkSoft,
-    fontSize: 13,
-    lineHeight: 19,
-    marginTop: 7,
-  },
+  reviewer: { color: '#101710', fontSize: 12, fontWeight: '900' },
+  reviewStarRow: { flexDirection: 'row', gap: 2, marginTop: 3 },
+  reviewBody: { color: marketplaceColors.inkSoft, fontSize: 11, lineHeight: 16, marginTop: 5 },
   allReviews: {
-    borderWidth: 1,
-    borderColor: '#B9C8B2',
-    borderRadius: 10,
-    height: 52,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 20,
+    borderWidth: 1, borderColor: '#B9C8B2', borderRadius: 10,
+    height: 42, alignItems: 'center', justifyContent: 'center', marginTop: 14,
   },
-  allReviewsText: {
-    color: marketplaceColors.primaryDark,
-    fontSize: 14,
-    fontWeight: '900',
-  },
+  allReviewsText: { color: marketplaceColors.primaryDark, fontSize: 12, fontWeight: '900' },
   bottomBar: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    height: 90,
-    backgroundColor: marketplaceColors.screen,
-    borderTopWidth: 1,
-    borderTopColor: '#CAD5C4',
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    gap: 12,
+    position: 'absolute', left: 0, right: 0, bottom: 0,
+    backgroundColor: marketplaceColors.screen, borderTopWidth: 1,
+    borderTopColor: '#CAD5C4', flexDirection: 'row',
+    alignItems: 'center', paddingHorizontal: 14, gap: 10, paddingTop: 8,
+  },
+  heartButton: {
+    width: 40, height: 40, borderRadius: 20, borderWidth: 1,
+    borderColor: '#DDE6D6', backgroundColor: '#FFFFFF',
+    alignItems: 'center', justifyContent: 'center',
   },
   outlineButton: {
-    flex: 1,
-    height: 48,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: marketplaceColors.primaryDark,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1, height: 42, borderRadius: 10, borderWidth: 2,
+    borderColor: marketplaceColors.primaryDark, alignItems: 'center', justifyContent: 'center',
   },
-  outlineText: {
-    color: marketplaceColors.primaryDark,
-    fontSize: 14,
-    fontWeight: '900',
-  },
+  outlineButtonActive: { backgroundColor: '#EAF4E8', borderColor: marketplaceColors.primary },
+  outlineText: { color: marketplaceColors.primaryDark, fontSize: 13, fontWeight: '900' },
+  outlineTextActive: { color: marketplaceColors.primary },
   buyButton: {
-    flex: 1,
-    height: 48,
-    borderRadius: 10,
-    backgroundColor: marketplaceColors.primaryDark,
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1, height: 42, borderRadius: 10,
+    backgroundColor: marketplaceColors.primaryDark, alignItems: 'center', justifyContent: 'center',
   },
-  buyText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: '900',
-  },
+  buyText: { color: '#FFFFFF', fontSize: 13, fontWeight: '900' },
 });
