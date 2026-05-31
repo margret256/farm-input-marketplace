@@ -2,7 +2,7 @@ import type { ComponentProps } from 'react';
 import type { ImageSourcePropType } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-export type AppTabKey = 'home' | 'market' | 'orders' | 'alerts' | 'profile';
+export type AppTabKey = 'home' | 'market' | 'orders' | 'alerts' | 'wishlist' | 'profile';
 
 export type ProductItem = {
   id: string;
@@ -36,6 +36,7 @@ export const tabItems: {
   { key: 'market', label: 'Market', route: '/market', icon: 'storefront' },
   { key: 'orders', label: 'Orders', route: '/orders', icon: 'receipt' },
   { key: 'alerts', label: 'Alerts', route: '/alerts', icon: 'notifications' },
+  { key: 'wishlist', label: 'Wishlist', route: '/wishlist', icon: 'heart' },
   { key: 'profile', label: 'Profile', route: '/profile', icon: 'person' },
 ];
 
@@ -45,9 +46,14 @@ export const categories: {
 }[] = [
   { name: 'Seeds', icon: 'seed-outline' },
   { name: 'Fertilizers', icon: 'sack' },
-  { name: 'Animal Feeds', icon: 'food-drumstick-outline' },
+  { name: 'Animal Feeds', icon: 'cow' },
   { name: 'Farm Tools', icon: 'shovel' },
   { name: 'Irrigation', icon: 'water-pump' },
+  { name: 'Pesticides', icon: 'spray' },
+  { name: 'Herbicides', icon: 'leaf-off' },
+  { name: 'Machinery', icon: 'tractor' },
+  { name: 'Storage', icon: 'warehouse' },
+  { name: 'Soil Care', icon: 'terrain' },
 ];
 
 export const featuredProducts: ProductItem[] = [
