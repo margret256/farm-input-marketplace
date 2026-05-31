@@ -10,7 +10,7 @@ import { marketplaceColors, marketplaceShadows } from '@/constants/marketplace';
 export function OrdersScreen() {
   return (
     <StaticScreen>
-      <AppScreen notificationDot title="AgroMarket">
+      <AppScreen title="AgroMarket">
         <Text style={styles.title}>My Orders</Text>
         <Text style={styles.subtitle}>Track your supplies and equipment deliveries.</Text>
         <View style={styles.tabs}>
@@ -22,12 +22,12 @@ export function OrdersScreen() {
           {orderItems.map((order) => (
             <View key={order.number} style={[styles.orderCard, marketplaceShadows.card]}>
               <View style={styles.orderTop}>
-                <View>
+                <View style={styles.orderTopLeft}>
                   <Text style={styles.orderNumber}>ORDER {order.number}</Text>
                   <Text style={styles.orderTitle}>{order.title}</Text>
                 </View>
                 <View style={[styles.statusPill, { backgroundColor: order.statusColor }]}>
-                  <Ionicons name="car-outline" size={15} color={marketplaceColors.primaryDark} />
+                  <Ionicons name="car-outline" size={12} color={marketplaceColors.primaryDark} />
                   <Text style={styles.statusText}>{order.status}</Text>
                 </View>
               </View>
@@ -61,7 +61,7 @@ export function OrdersScreen() {
           <Pressable style={styles.offerButton}>
             <Text style={styles.offerButtonText}>Shop Now</Text>
           </Pressable>
-          <Ionicons name="leaf-outline" size={112} color="rgba(255,255,255,0.18)" style={styles.offerLeaf} />
+          <Ionicons name="leaf-outline" size={80} color="rgba(255,255,255,0.18)" style={styles.offerLeaf} />
         </View>
       </AppScreen>
       <FloatingTabBar active="orders" />
@@ -72,29 +72,29 @@ export function OrdersScreen() {
 const styles = StyleSheet.create({
   title: {
     color: '#101710',
-    fontSize: 38,
+    fontSize: 24,
     fontWeight: '900',
     letterSpacing: 0,
   },
   subtitle: {
     color: marketplaceColors.inkSoft,
-    fontSize: 18,
-    marginTop: 8,
+    fontSize: 13,
+    marginTop: 4,
   },
   tabs: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 28,
-    marginBottom: 22,
+    gap: 8,
+    marginTop: 16,
+    marginBottom: 14,
   },
   tab: {
     backgroundColor: '#E9EFE4',
     color: marketplaceColors.inkSoft,
-    borderRadius: 24,
+    borderRadius: 20,
     overflow: 'hidden',
-    paddingHorizontal: 29,
-    paddingVertical: 11,
-    fontSize: 20,
+    paddingHorizontal: 16,
+    paddingVertical: 7,
+    fontSize: 12,
     fontWeight: '800',
   },
   activeTab: {
@@ -102,59 +102,64 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   orderList: {
-    gap: 22,
+    gap: 14,
   },
   orderCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 14,
-    padding: 20,
+    padding: 14,
     borderWidth: 1,
     borderColor: '#E2E8DC',
   },
   orderTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 12,
+    alignItems: 'flex-start',
+    gap: 8,
+  },
+  orderTopLeft: {
+    flex: 1,
   },
   orderNumber: {
     color: marketplaceColors.inkMuted,
-    fontSize: 15,
+    fontSize: 10,
     fontWeight: '900',
-    letterSpacing: 1.5,
+    letterSpacing: 1,
   },
   orderTitle: {
     color: '#101710',
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: '900',
-    marginTop: 5,
+    marginTop: 3,
   },
   statusPill: {
-    borderRadius: 18,
-    paddingHorizontal: 14,
-    height: 34,
+    borderRadius: 14,
+    paddingHorizontal: 10,
+    height: 26,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 4,
+    flexShrink: 0,
   },
   statusText: {
     color: marketplaceColors.primaryDark,
-    fontSize: 15,
+    fontSize: 11,
     fontWeight: '900',
   },
   imageRow: {
     flexDirection: 'row',
-    gap: 12,
-    marginTop: 26,
+    gap: 8,
+    marginTop: 14,
   },
   orderImage: {
-    width: 78,
-    height: 78,
+    width: 56,
+    height: 56,
     borderRadius: 8,
     resizeMode: 'cover',
   },
   moreBox: {
-    width: 78,
-    height: 78,
+    width: 56,
+    height: 56,
     borderRadius: 8,
     backgroundColor: '#E9EFE4',
     alignItems: 'center',
@@ -162,47 +167,47 @@ const styles = StyleSheet.create({
   },
   moreText: {
     color: marketplaceColors.inkSoft,
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: '900',
   },
   line: {
     height: 1,
     backgroundColor: '#DCE4D7',
-    marginTop: 30,
+    marginTop: 14,
   },
   orderBottom: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 12,
   },
   totalLabel: {
     color: marketplaceColors.inkMuted,
-    fontSize: 15,
+    fontSize: 11,
     fontWeight: '800',
   },
   totalText: {
     color: marketplaceColors.primaryDark,
-    fontSize: 25,
+    fontSize: 16,
     fontWeight: '900',
   },
   detailsButton: {
     borderWidth: 1,
     borderColor: marketplaceColors.primaryDark,
-    borderRadius: 10,
-    paddingHorizontal: 24,
-    paddingVertical: 13,
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
   },
   detailsText: {
     color: marketplaceColors.primaryDark,
-    fontSize: 21,
+    fontSize: 13,
     fontWeight: '800',
   },
   offerCard: {
-    marginTop: 26,
-    borderRadius: 18,
+    marginTop: 18,
+    borderRadius: 14,
     backgroundColor: '#FF7F11',
-    padding: 28,
+    padding: 18,
     overflow: 'hidden',
   },
   offerBadge: {
@@ -211,40 +216,40 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     borderRadius: 6,
     overflow: 'hidden',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    fontSize: 11,
     fontWeight: '900',
   },
   offerTitle: {
     color: '#FFFFFF',
-    fontSize: 30,
-    lineHeight: 38,
+    fontSize: 18,
+    lineHeight: 24,
     fontWeight: '900',
-    marginTop: 17,
+    marginTop: 10,
   },
   offerText: {
     color: '#FFFFFF',
-    fontSize: 19,
-    lineHeight: 27,
-    marginTop: 18,
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 8,
   },
   offerButton: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 14,
+    borderRadius: 10,
     alignSelf: 'flex-start',
-    paddingHorizontal: 32,
-    paddingVertical: 17,
-    marginTop: 28,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginTop: 14,
   },
   offerButtonText: {
     color: '#9C3F00',
-    fontSize: 23,
+    fontSize: 13,
     fontWeight: '800',
   },
   offerLeaf: {
     position: 'absolute',
-    right: 44,
-    bottom: 70,
+    right: 20,
+    bottom: 20,
   },
 });
