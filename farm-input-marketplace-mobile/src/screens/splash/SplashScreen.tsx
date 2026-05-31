@@ -1,7 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { useEffect } from 'react';
-import { ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { LogoMark } from '@/components/ui/logo-mark';
@@ -17,7 +16,9 @@ function SplashContent() {
         <View style={styles.loadingTrack}>
           <View style={styles.loadingFill} />
         </View>
-        <Text style={styles.loadingText}>PREPARING FOR HARVEST...</Text>
+         <Pressable style={styles.getStartedButton} onPress={() => router.replace('/role-selection')}>
+           <Text style={styles.getStartedButtonText}>Get Started</Text>
+         </Pressable>
       </View>
       <View style={styles.footer}>
         <View style={styles.footerItem}>
@@ -34,35 +35,27 @@ function SplashContent() {
 }
 
 export function SplashScreen() {
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      router.replace('/onboarding');
-    }, 2200);
+   if (marketplaceImages.splashBackground) {
+     return (
+       <ImageBackground source={marketplaceImages.splashBackground} resizeMode="cover" style={styles.screen}>
+         <View style={styles.greenOverlay} />
+         <SplashContent />
+       </ImageBackground>
+     );
+   }
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (marketplaceImages.splashBackground) {
-    return (
-      <ImageBackground source={marketplaceImages.splashBackground} resizeMode="cover" style={styles.screen}>
-        <View style={styles.greenOverlay} />
-        <SplashContent />
-      </ImageBackground>
-    );
-  }
-
-  return (
-    <View style={[styles.screen, styles.placeholderBackdrop]}>
-      <View style={styles.fieldHorizon} />
-      <View style={styles.fieldRows}>
-        {Array.from({ length: 12 }).map((_, index) => (
-          <View key={index} style={[styles.fieldRow, { left: `${index * 8 - 20}%` }]} />
-        ))}
-      </View>
-      <SplashContent />
-    </View>
-  );
-}
+   return (
+     <View style={[styles.screen, styles.placeholderBackdrop]}>
+       <View style={styles.fieldHorizon} />
+       <View style={styles.fieldRows}>
+         {Array.from({ length: 12 }).map((_, index) => (
+           <View key={index} style={[styles.fieldRow, { left: `${index * 8 - 20}%` }]} />
+         ))}
+       </View>
+       <SplashContent />
+     </View>
+   );
+ }
 
 const styles = StyleSheet.create({
   screen: {
@@ -157,12 +150,25 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(27, 94, 32, 0.78)',
     transform: [{ skewY: '-8deg' }],
   },
-  fieldRow: {
-    position: 'absolute',
-    top: -50,
-    width: 22,
-    height: '140%',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-    transform: [{ rotate: '12deg' }],
-  },
-});
+   fieldRow: {
+     position: 'absolute',
+     top: -50,
+     width: 22,
+     height: '140%',
+     backgroundColor: 'rgba(255, 255, 255, 0.08)',
+     transform: [{ rotate: '12deg' }],
+   },
+   getStartedButton: {
+     backgroundColor: marketplaceColors.primary,
+     borderRadius: 12,
+     paddingVertical: 16,
+     paddingHorizontal: 24,
+     marginTop: 24,
+   },
+   getStartedButtonText: {
+     color: '#FFFFFF',
+     fontSize: 16,
+     fontWeight: '700',
+     textAlign: 'center',
+   },
+ });
