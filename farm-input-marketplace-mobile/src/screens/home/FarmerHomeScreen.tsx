@@ -1,5 +1,5 @@
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, StaticScreen } from '@/components/marketplace/AppScreen';
 import { FloatingTabBar } from '@/components/marketplace/FloatingTabBar';
@@ -11,15 +11,19 @@ import {
   recommendedProducts,
 } from '@/constants/mock-marketplace';
 import { marketplaceColors, marketplaceShadows } from '@/constants/marketplace';
+import { useAuthStore } from '@/store/auth.store';
 
 export function FarmerHomeScreen() {
+  const user = useAuthStore((state) => state.user);
+  const profileImage = useAuthStore((state) => state.profileImage);
+
   return (
     <StaticScreen>
-      <AppScreen notificationDot title="AgroMarket">
+      <AppScreen title="AgroMarket">
         <View style={styles.profileRow}>
-          <Image source={appImages.smartFarming} style={styles.avatar} />
+          <Image source={profileImage ? { uri: profileImage } : appImages.smartFarming} style={styles.avatar} />
           <View>
-            <Text style={styles.hello}>Hello, Farmer</Text>
+            <Text style={styles.hello}>Hello, {user?.firstName || 'Farmer'}</Text>
             <Text style={styles.location}>Kampala, UG</Text>
           </View>
         </View>
@@ -29,18 +33,30 @@ export function FarmerHomeScreen() {
           <Ionicons name="mic-outline" size={18} color={marketplaceColors.primaryDark} />
           <Ionicons name="options-outline" size={18} color={marketplaceColors.primaryDark} />
         </View>
-        <View style={styles.sectionRow}>
-          <Text style={styles.sectionTitle}>Categories</Text>
-          <Text style={styles.viewAll}>View All</Text>
-        </View>
-        <View style={styles.categoryRow}>
+
+       
+
+        {/* Horizontally scrollable categories — shows ALL */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categoryRow}>
           {categories.map((category) => (
-            <View key={category.name} style={styles.categoryItem}>
-              <MaterialCommunityIcons name={category.icon} size={24} color={marketplaceColors.primary} />
-              <Text numberOfLines={1} style={styles.categoryLabel}>{category.name}</Text>
-            </View>
+            <Pressable key={category.name} style={styles.categoryItem}>
+              <View style={styles.categoryIconWrap}>
+                <MaterialCommunityIcons
+                  name={category.icon}
+                  size={30}
+                  color={marketplaceColors.primary}
+                />
+              </View>
+              <Text numberOfLines={2} style={styles.categoryLabel}>
+                {category.name}
+              </Text>
+            </Pressable>
           ))}
-        </View>
+        </ScrollView>
+
         <View style={styles.saleBanner}>
           <Image source={appImages.harvest} style={styles.saleImage} />
           <View style={styles.saleOverlay} />
@@ -51,6 +67,7 @@ export function FarmerHomeScreen() {
             <Text style={styles.shopNowText}>Shop Now</Text>
           </Pressable>
         </View>
+
         <View style={styles.sectionRow}>
           <Text style={styles.sectionTitle}>Featured Products</Text>
           <Text style={styles.viewAll}>See More</Text>
@@ -60,6 +77,7 @@ export function FarmerHomeScreen() {
             <ProductCard key={product.id} compact product={product} />
           ))}
         </View>
+
         <Text style={styles.sectionTitle}>Recommended for You</Text>
         <View style={styles.recommendedList}>
           {recommendedProducts.map((item) => (
@@ -75,6 +93,7 @@ export function FarmerHomeScreen() {
           ))}
         </View>
       </AppScreen>
+
       <Pressable style={styles.fab}>
         <Ionicons name="add" size={28} color="#FFFFFF" />
       </Pressable>
@@ -94,6 +113,8 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
+    resizeMode: 'cover',
+    overflow:'hidden',
   },
   hello: {
     fontSize: 12,
@@ -115,6 +136,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 13,
     gap: 9,
+    marginBottom:17,
   },
   searchText: {
     flex: 1,
@@ -134,28 +156,45 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '900',
   },
-  viewAll: {
-    color: marketplaceColors.primaryDark,
-    fontSize: 10,
-    fontWeight: '900',
-  },
+   viewAll: {
+     padding: 6,
+   },
+   viewAllText: {
+     color: marketplaceColors.primaryDark,
+     fontSize: 10,
+     fontWeight: '900',
+   },
+  /* Horizontal scroll row for categories */
   categoryRow: {
     flexDirection: 'row',
-    gap: 9,
+    gap: 10,
+    paddingRight: 16,
+    paddingBottom: 4,
   },
   categoryItem: {
-    flex: 1,
-    minHeight: 70,
+    width: 76,
+    minHeight: 82,
     borderRadius: 13,
     backgroundColor: '#EAF4E8',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 6,
     gap: 6,
+  },
+  categoryIconWrap: {
+    width: 46,
+    height: 46,
+    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   categoryLabel: {
     color: '#101710',
-    fontSize: 8,
+    fontSize: 9,
     fontWeight: '800',
+    textAlign: 'center',
   },
   saleBanner: {
     height: 120,
