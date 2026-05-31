@@ -19,6 +19,16 @@ export type RegisterPayload = {
   confirmPassword: string;
 };
 
+export type DealerRegisterPayload = {
+  businessName: string;
+  ownerName: string;
+  businessLocation: string;
+  phone: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 export type LoginPayload = {
   identifier: string;
   password: string;

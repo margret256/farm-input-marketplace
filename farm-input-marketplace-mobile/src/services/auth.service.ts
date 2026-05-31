@@ -1,6 +1,7 @@
 import { apiClient } from '@/api/client';
 import type {
   AuthResponse,
+  DealerRegisterPayload,
   LoginPayload,
   RegisterPayload,
   RegisterResponse,
@@ -9,6 +10,17 @@ import type {
 
 export async function registerUser(payload: RegisterPayload) {
   const response = await apiClient.post<RegisterResponse>('/auth/register', payload);
+  return response.data;
+}
+
+export async function registerDealer(payload: DealerRegisterPayload) {
+  const response = await apiClient.post<RegisterResponse>('/auth/register/dealer', {
+    businessName: payload.businessName,
+    ownerName: payload.ownerName,
+    businessLocation: payload.businessLocation,
+    phone: payload.phone,
+    email: payload.email,
+  });
   return response.data;
 }
 

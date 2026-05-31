@@ -13,13 +13,14 @@ import { useAuthStore } from '@/store/auth.store';
 import { getApiErrorMessage } from '@/utils/api-error';
 
 export function OtpVerificationScreen() {
-  const params = useLocalSearchParams<{ identifier?: string }>();
+  const params = useLocalSearchParams<{ identifier?: string; role?: string }>();
   const [codeDigits, setCodeDigits] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const inputRefs = useRef<(TextInput | null)[]>([]);
   const setSession = useAuthStore((state) => state.setSession);
   const identifier = params.identifier ?? '';
+  const role = params.role ?? '';
 
   function updateDigit(value: string, index: number) {
     const digit = value.replace(/\D/g, '').slice(-1);
@@ -49,7 +50,11 @@ export function OtpVerificationScreen() {
       setLoading(true);
       const response = await verifyOtp({ identifier, code });
       await setSession(response.accessToken, response.user);
-      router.replace('/home');
+      if (role === 'dealer' || response.user.role === 'DEALER') {
+        router.replace('/dealer/dashboard');
+      } else {
+        router.replace('/home');
+      }
     } catch (error) {
       Alert.alert('Verification failed', getApiErrorMessage(error, 'Try again in a moment.'));
     } finally {

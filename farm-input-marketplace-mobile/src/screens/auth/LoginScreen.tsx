@@ -14,6 +14,7 @@ import { getApiErrorMessage } from '@/utils/api-error';
 export function LoginScreen() {
   const [identifier, setIdentifier] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const setSession = useAuthStore((state) => state.setSession);
 
@@ -27,7 +28,11 @@ export function LoginScreen() {
       setLoading(true);
       const response = await loginUser({ identifier, password });
       await setSession(response.accessToken, response.user);
-      router.replace('/home');
+      if (response.user.role === 'DEALER') {
+        router.replace('/dealer/dashboard');
+      } else {
+        router.replace('/home');
+      }
     } catch (error) {
       Alert.alert('Login failed', getApiErrorMessage(error, 'Check your details and try again.'));
     } finally {
@@ -58,8 +63,9 @@ export function LoginScreen() {
             label="Password"
             onChangeText={setPassword}
             placeholder="Enter your password"
-            secureTextEntry
-            trailingIcon="eye-outline"
+            secureTextEntry={!showPassword}
+            trailingIcon={showPassword ? 'eye-off-outline' : 'eye-outline'}
+            onTrailingPress={() => setShowPassword(!showPassword)}
             value={password}
           />
         </View>
@@ -173,8 +179,6 @@ const styles = StyleSheet.create({
     marginTop: 25,
     minHeight: 52,
     borderRadius: 10,
-    backgroundColor: '#1A5E20',
-    borderColor: '#1A5E20',
     width: '100%',
   },
   dividerRow: {

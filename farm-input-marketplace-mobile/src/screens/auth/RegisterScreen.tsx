@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Link, router } from 'expo-router';
+import { Link, router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -15,7 +15,9 @@ export function RegisterScreen() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   async function handleRegister() {
@@ -77,7 +79,9 @@ export function RegisterScreen() {
             label="Password"
             onChangeText={setPassword}
             placeholder="••••••••"
-            secureTextEntry
+            secureTextEntry={!showPassword}
+            trailingIcon={showPassword ? 'eye-off-outline' : 'eye-outline'}
+            onTrailingPress={() => setShowPassword(!showPassword)}
             value={password}
           />
           <AuthTextField
@@ -85,7 +89,9 @@ export function RegisterScreen() {
             label="Confirm Password"
             onChangeText={setConfirmPassword}
             placeholder="••••••••"
-            secureTextEntry
+            secureTextEntry={!showConfirmPassword}
+            trailingIcon={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
+            onTrailingPress={() => setShowConfirmPassword(!showConfirmPassword)}
             value={confirmPassword}
           />
         </View>

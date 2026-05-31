@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { ComponentProps } from 'react';
-import { StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native';
+import { Pressable, StyleSheet, Text, TextInput, TextInputProps, View } from 'react-native';
 
 import { marketplaceColors } from '@/constants/marketplace';
 
@@ -8,9 +8,10 @@ type AuthTextFieldProps = TextInputProps & {
   label: string;
   icon: ComponentProps<typeof Ionicons>['name'];
   trailingIcon?: ComponentProps<typeof Ionicons>['name'];
+  onTrailingPress?: () => void;
 };
 
-export function AuthTextField({ label, icon, trailingIcon, style, ...inputProps }: AuthTextFieldProps) {
+export function AuthTextField({ label, icon, trailingIcon, onTrailingPress, style, ...inputProps }: AuthTextFieldProps) {
   return (
     <View style={styles.wrapper}>
       <Text style={styles.label}>{label}</Text>
@@ -22,7 +23,13 @@ export function AuthTextField({ label, icon, trailingIcon, style, ...inputProps 
           selectionColor={marketplaceColors.primary}
           {...inputProps}
         />
-        {trailingIcon ? <Ionicons name={trailingIcon} size={16} color={marketplaceColors.primaryDark} /> : null}
+        {trailingIcon && onTrailingPress ? (
+          <Pressable onPress={onTrailingPress}>
+            <Ionicons name={trailingIcon} size={16} color={marketplaceColors.primaryDark} />
+          </Pressable>
+        ) : trailingIcon ? (
+          <Ionicons name={trailingIcon} size={16} color={marketplaceColors.primaryDark} />
+        ) : null}
       </View>
     </View>
   );

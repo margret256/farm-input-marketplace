@@ -9,13 +9,16 @@ const TOKEN_KEY = 'farm_input_marketplace_access_token';
 type AuthState = {
   token?: string;
   user?: AuthUser;
+  profileImage?: string;
   setSession: (token: string, user: AuthUser) => Promise<void>;
   clearSession: () => Promise<void>;
+  setProfileImage: (imageUri: string) => void;
 };
 
 export const useAuthStore = create<AuthState>((set) => ({
   token: undefined,
   user: undefined,
+  profileImage: undefined,
   setSession: async (token, user) => {
     await SecureStore.setItemAsync(TOKEN_KEY, token);
     setAuthToken(token);
@@ -24,6 +27,9 @@ export const useAuthStore = create<AuthState>((set) => ({
   clearSession: async () => {
     await SecureStore.deleteItemAsync(TOKEN_KEY);
     setAuthToken(undefined);
-    set({ token: undefined, user: undefined });
+    set({ token: undefined, user: undefined, profileImage: undefined });
+  },
+  setProfileImage: (imageUri) => {
+    set({ profileImage: imageUri });
   },
 }));
