@@ -24,20 +24,23 @@ export function CheckoutScreen() {
     <SafeAreaView style={styles.screen}>
       <AppHeader back help title="Checkout" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+
+        {/* Delivery Address */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Delivery Address</Text>
           <Text style={styles.addNew}>+ Add New</Text>
         </View>
         <View style={[styles.addressCard, marketplaceShadows.card]}>
-          <Ionicons name="location-outline" size={30} color={marketplaceColors.primaryDark} />
+          <Ionicons name="location-outline" size={18} color={marketplaceColors.primaryDark} />
           <View style={styles.addressBody}>
             <Text style={styles.addressTitle}>Primary Farm Office</Text>
             <Text style={styles.addressText}>Plot 45, Green Valley Industrial Hub, Wakiso District, Uganda</Text>
             <Text style={styles.addressText}>+256 701 234 567</Text>
           </View>
-          <Ionicons name="pencil" size={27} color={marketplaceColors.inkMuted} />
+          <Ionicons name="pencil" size={14} color={marketplaceColors.inkMuted} />
         </View>
 
+        {/* Delivery Method */}
         <Text style={styles.sectionTitle}>Delivery Method</Text>
         <View style={styles.methodList}>
           {deliveryMethods.map(([title, subtitle, price, selected]) => (
@@ -54,12 +57,17 @@ export function CheckoutScreen() {
           ))}
         </View>
 
+        {/* Payment Method */}
         <Text style={styles.sectionTitle}>Payment Method</Text>
         <View style={styles.methodList}>
           {paymentMethods.map(([title, bg, fg, selected]) => (
             <View key={title} style={styles.paymentCard}>
-              <View style={[styles.paymentIcon, { backgroundColor: bg, borderColor: fg }]}>
-                <Ionicons name={title === 'Cash on Delivery' ? 'cash-outline' : 'wallet-outline'} size={24} color={fg} />
+<View style={[styles.paymentIcon, { backgroundColor: bg, borderColor: fg }]}>
+                <Ionicons
+                  name={title === 'Cash on Delivery' ? 'cash-outline' : 'wallet-outline'}
+                  size={16}
+                  color={fg}
+                />
               </View>
               <Text style={styles.paymentTitle}>{title}</Text>
               <View style={[styles.paymentRadio, selected && styles.paymentSelected]}>
@@ -69,6 +77,7 @@ export function CheckoutScreen() {
           ))}
         </View>
 
+        {/* Order Summary */}
         <View style={styles.summary}>
           <Text style={styles.summaryTitle}>Order Summary</Text>
           <View style={styles.summaryItem}>
@@ -97,16 +106,19 @@ export function CheckoutScreen() {
             <Text style={styles.totalMuted}>Delivery Fee</Text>
             <Text style={styles.totalMuted}>UGX 5,000</Text>
           </View>
-          <View style={styles.totalsRow}>
+          <View style={[styles.totalsRow, styles.totalFinalRow]}>
             <Text style={styles.totalLabel}>Total</Text>
             <Text style={styles.totalValue}>UGX 214,000</Text>
           </View>
         </View>
+
       </ScrollView>
+
+      {/* Confirm Button */}
       <View style={styles.bottom}>
         <Pressable onPress={() => router.push('/mobile-money-payment')} style={styles.confirmButton}>
           <Text style={styles.confirmText}>Confirm Order</Text>
-          <Ionicons name="chevron-forward" size={25} color="#FFFFFF" />
+          <Ionicons name="chevron-forward" size={16} color="#FFFFFF" />
         </Pressable>
       </View>
     </SafeAreaView>
@@ -114,101 +126,227 @@ export function CheckoutScreen() {
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: marketplaceColors.screen },
-  content: { padding: 20, paddingBottom: 124 },
-  sectionHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sectionTitle: { color: '#101710', fontSize: 26, fontWeight: '800', marginTop: 18, marginBottom: 14 },
-  addNew: { color: marketplaceColors.primaryDark, fontSize: 16, fontWeight: '900' },
+  screen: {
+    flex: 1,
+    backgroundColor: marketplaceColors.screen,
+  },
+  content: {
+    padding: 12,
+    paddingBottom: 80,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  sectionTitle: {
+    color: '#101710',
+    fontSize: 13,
+    fontWeight: '800',
+    marginTop: 12,
+    marginBottom: 8,
+  },
+  addNew: {
+    color: marketplaceColors.primaryDark,
+    fontSize: 11,
+    fontWeight: '900',
+    marginTop: 12,
+  },
   addressCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: '#B8C6B1',
-    padding: 20,
-    flexDirection: 'row',
-    gap: 16,
-    alignItems: 'center',
-  },
-  addressBody: { flex: 1, gap: 6 },
-  addressTitle: { color: '#101710', fontSize: 16, fontWeight: '900' },
-  addressText: { color: marketplaceColors.inkSoft, fontSize: 17, lineHeight: 25 },
-  methodList: { gap: 12, marginBottom: 20 },
-  methodCard: {
-    minHeight: 86,
-    borderRadius: 13,
-    borderWidth: 1,
-    borderColor: '#B8C6B1',
-    backgroundColor: '#FFFFFF',
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
-  selectedMethod: { borderWidth: 2, borderColor: marketplaceColors.primaryDark },
-  radio: {
-    width: 24,
-    height: 24,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: marketplaceColors.inkMuted,
+    borderColor: '#B8C6B1',
+    padding: 10,
+    flexDirection: 'row',
+    gap: 8,
     alignItems: 'center',
-    justifyContent: 'center',
   },
-  radioSelected: { borderColor: marketplaceColors.primaryDark, backgroundColor: marketplaceColors.primaryDark },
-  radioDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#FFFFFF' },
-  methodBody: { flex: 1 },
-  methodTitle: { color: '#101710', fontSize: 16, fontWeight: '900' },
-  methodSubtitle: { color: marketplaceColors.inkSoft, fontSize: 18, marginTop: 4 },
-  methodPrice: { color: marketplaceColors.primaryDark, fontSize: 15, fontWeight: '900' },
-  paymentCard: {
-    minHeight: 90,
-    borderRadius: 13,
+  addressBody: {
+    flex: 1,
+    gap: 3,
+  },
+  addressTitle: {
+    color: '#101710',
+    fontSize: 12,
+    fontWeight: '900',
+  },
+  addressText: {
+    color: marketplaceColors.inkSoft,
+    fontSize: 10,
+    lineHeight: 14,
+  },
+  methodList: {
+    gap: 8,
+    marginBottom: 4,
+  },
+  methodCard: {
+    minHeight: 52,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#B8C6B1',
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 18,
+    gap: 8,
   },
-  paymentIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 7,
-    borderWidth: 4,
-    alignItems: 'center',
-    justifyContent: 'center',
+  selectedMethod: {
+    borderWidth: 2,
+    borderColor: marketplaceColors.primaryDark,
   },
-  paymentTitle: { flex: 1, color: '#101710', fontSize: 17, fontWeight: '900' },
-  paymentRadio: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+  radio: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     borderWidth: 1,
     borderColor: marketplaceColors.inkMuted,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  paymentSelected: { borderColor: marketplaceColors.primaryDark },
-  paymentDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: marketplaceColors.primaryDark },
+  radioSelected: {
+    borderColor: marketplaceColors.primaryDark,
+    backgroundColor: marketplaceColors.primaryDark,
+  },
+  radioDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#FFFFFF',
+  },
+  methodBody: {
+    flex: 1,
+  },
+  methodTitle: {
+    color: '#101710',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  methodSubtitle: {
+    color: marketplaceColors.inkSoft,
+    fontSize: 10,
+    marginTop: 2,
+  },
+  methodPrice: {
+    color: marketplaceColors.primaryDark,
+    fontSize: 11,
+    fontWeight: '900',
+  },
+  paymentCard: {
+    minHeight: 52,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#B8C6B1',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  paymentIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 6,
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paymentTitle: {
+    flex: 1,
+    color: '#101710',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+  paymentRadio: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    borderWidth: 1,
+    borderColor: marketplaceColors.inkMuted,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paymentSelected: {
+    borderColor: marketplaceColors.primaryDark,
+  },
+  paymentDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: marketplaceColors.primaryDark,
+  },
   summary: {
     backgroundColor: '#E2E8DC',
-    borderRadius: 15,
-    padding: 20,
-    marginTop: 10,
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 6,
   },
-  summaryTitle: { color: '#101710', fontSize: 27, fontWeight: '800', marginBottom: 20 },
-  summaryItem: { flexDirection: 'row', alignItems: 'center', gap: 13 },
-  summaryImage: { width: 58, height: 58, borderRadius: 8, resizeMode: 'cover' },
-  summaryBody: { flex: 1 },
-  summaryName: { color: '#101710', fontSize: 16, fontWeight: '900' },
-  summaryMeta: { color: marketplaceColors.inkSoft, fontSize: 15, marginTop: 3 },
-  summaryPrice: { color: '#101710', fontSize: 16, fontWeight: '700' },
-  summaryLine: { height: 1, backgroundColor: '#B8C6B1', marginVertical: 16 },
-  totalsRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 11 },
-  totalMuted: { color: marketplaceColors.inkSoft, fontSize: 18 },
-  totalLabel: { color: '#101710', fontSize: 26, fontWeight: '800' },
-  totalValue: { color: marketplaceColors.primaryDark, fontSize: 24, fontWeight: '900' },
+  summaryTitle: {
+    color: '#101710',
+    fontSize: 13,
+    fontWeight: '800',
+    marginBottom: 10,
+  },
+  summaryItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  summaryImage: {
+    width: 38,
+    height: 38,
+    borderRadius: 8,
+    resizeMode: 'cover',
+  },
+  summaryBody: {
+    flex: 1,
+  },
+  summaryName: {
+    color: '#101710',
+    fontSize: 11,
+    fontWeight: '800',
+  },
+  summaryMeta: {
+    color: marketplaceColors.inkSoft,
+    fontSize: 10,
+    marginTop: 2,
+  },
+  summaryPrice: {
+    color: '#101710',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+  summaryLine: {
+    height: 1,
+    backgroundColor: '#B8C6B1',
+    marginVertical: 8,
+  },
+  totalsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  totalFinalRow: {
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#B8C6B1',
+  },
+  totalMuted: {
+    color: marketplaceColors.inkSoft,
+    fontSize: 11,
+  },
+  totalLabel: {
+    color: '#101710',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+  totalValue: {
+    color: marketplaceColors.primaryDark,
+    fontSize: 14,
+    fontWeight: '900',
+  },
   bottom: {
     position: 'absolute',
     left: 0,
@@ -217,17 +355,21 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#CAD5C4',
     backgroundColor: marketplaceColors.screen,
-    padding: 20,
+    padding: 12,
   },
   confirmButton: {
-    height: 68,
-    borderRadius: 13,
+    height: 46,
+    borderRadius: 12,
     backgroundColor: marketplaceColors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 18,
+    gap: 8,
     ...marketplaceShadows.button,
   },
-  confirmText: { color: '#FFFFFF', fontSize: 22, fontWeight: '900' },
+  confirmText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '900',
+  },
 });

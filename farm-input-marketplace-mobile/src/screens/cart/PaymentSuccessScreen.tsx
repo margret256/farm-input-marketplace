@@ -10,9 +10,9 @@ import { marketplaceColors, marketplaceShadows } from '@/constants/marketplace';
 export function PaymentSuccessScreen() {
   return (
     <StaticScreen>
-      <AppScreen notificationDot title="AgroMarket">
+      <AppScreen title="AgroMarket">
         <View style={styles.successIcon}>
-          <Ionicons name="checkmark-circle-outline" size={86} color="#C5F7C4" />
+          <Ionicons name="checkmark-circle-outline" size={52} color="#C5F7C4" />
         </View>
         <Text style={styles.title}>Payment Successful!</Text>
         <Text style={styles.subtitle}>Order #12345 confirmed</Text>
@@ -54,11 +54,11 @@ export function PaymentSuccessScreen() {
         </View>
 
         <Pressable onPress={() => router.push('/track-order')} style={styles.trackButton}>
-          <Ionicons name="car-outline" size={29} color="#FFFFFF" />
+          <Ionicons name="car-outline" size={20} color="#FFFFFF" />
           <Text style={styles.trackText}>Track Order</Text>
         </Pressable>
         <Pressable onPress={() => router.push('/market')} style={styles.shoppingButton}>
-          <Ionicons name="basket-outline" size={29} color={marketplaceColors.primaryDark} />
+          <Ionicons name="basket-outline" size={20} color={marketplaceColors.primaryDark} />
           <Text style={styles.shoppingText}>Continue Shopping</Text>
         </Pressable>
         <Text style={styles.support}>Need help? <Text style={styles.supportLink}>Contact Support</Text></Text>
@@ -70,67 +70,67 @@ export function PaymentSuccessScreen() {
 
 const styles = StyleSheet.create({
   successIcon: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     backgroundColor: marketplaceColors.primary,
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    marginTop: 48,
+    marginTop: 24,
     ...marketplaceShadows.button,
   },
-  title: { color: '#101710', fontSize: 42, fontWeight: '900', textAlign: 'center', marginTop: 32 },
-  subtitle: { color: marketplaceColors.inkSoft, fontSize: 24, textAlign: 'center', marginTop: 16 },
+  title: { color: '#101710', fontSize: 24, fontWeight: '900', textAlign: 'center', marginTop: 16 },
+  subtitle: { color: marketplaceColors.inkSoft, fontSize: 13, textAlign: 'center', marginTop: 8 },
   receipt: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 15,
+    borderRadius: 12,
     borderWidth: 1,
     borderColor: '#B8C6B1',
-    padding: 26,
-    marginTop: 42,
+    padding: 14,
+    marginTop: 20,
   },
   receiptTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  receiptLabel: { color: marketplaceColors.inkMuted, fontSize: 18, fontWeight: '900', letterSpacing: 1.5 },
-  receiptDate: { color: '#101710', fontSize: 18, fontWeight: '900' },
-  productRow: { flexDirection: 'row', alignItems: 'center', gap: 24, marginTop: 28 },
-  productImage: { width: 100, height: 100, borderRadius: 10, resizeMode: 'cover' },
+  receiptLabel: { color: marketplaceColors.inkMuted, fontSize: 11, fontWeight: '900', letterSpacing: 1.1 },
+  receiptDate: { color: '#101710', fontSize: 11, fontWeight: '900' },
+  productRow: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14 },
+  productImage: { width: 56, height: 56, borderRadius: 8, resizeMode: 'cover' },
   productBody: { flex: 1 },
-  productTitle: { color: '#101710', fontSize: 29, fontWeight: '800' },
-  productMeta: { color: marketplaceColors.inkSoft, fontSize: 24, marginTop: 5 },
-  infoRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 28, gap: 18 },
-  infoLabel: { color: marketplaceColors.inkSoft, fontSize: 22 },
-  infoValue: { color: '#101710', fontSize: 20, fontWeight: '900', textAlign: 'right' },
-  dashedLine: { borderTopWidth: 1, borderStyle: 'dashed', borderColor: '#B8C6B1', marginVertical: 30 },
-  priceRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 17 },
-  solidLine: { height: 1, backgroundColor: '#B8C6B1', marginTop: 14, marginBottom: 26 },
+  productTitle: { color: '#101710', fontSize: 15, fontWeight: '800' },
+  productMeta: { color: marketplaceColors.inkSoft, fontSize: 12, marginTop: 3 },
+  infoRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 14, gap: 10 },
+  infoLabel: { color: marketplaceColors.inkSoft, fontSize: 12 },
+  infoValue: { color: '#101710', fontSize: 12, fontWeight: '900', textAlign: 'right' },
+  dashedLine: { borderTopWidth: 1, borderStyle: 'dashed', borderColor: '#B8C6B1', marginVertical: 14 },
+  priceRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  solidLine: { height: 1, backgroundColor: '#B8C6B1', marginTop: 8, marginBottom: 14 },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  totalLabel: { color: '#101710', fontSize: 29, fontWeight: '800' },
-  totalValue: { color: marketplaceColors.primaryDark, fontSize: 34, fontWeight: '900' },
+  totalLabel: { color: '#101710', fontSize: 15, fontWeight: '800' },
+  totalValue: { color: marketplaceColors.primaryDark, fontSize: 18, fontWeight: '900' },
   trackButton: {
-    height: 82,
-    borderRadius: 15,
+    height: 52,
+    borderRadius: 12,
     backgroundColor: marketplaceColors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 16,
-    marginTop: 46,
+    gap: 10,
+    marginTop: 22,
     ...marketplaceShadows.button,
   },
-  trackText: { color: '#FFFFFF', fontSize: 25, fontWeight: '900' },
+  trackText: { color: '#FFFFFF', fontSize: 15, fontWeight: '900' },
   shoppingButton: {
-    height: 82,
-    borderRadius: 15,
-    borderWidth: 3,
+    height: 52,
+    borderRadius: 12,
+    borderWidth: 2,
     borderColor: marketplaceColors.primaryDark,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 16,
-    marginTop: 24,
+    gap: 10,
+    marginTop: 12,
   },
-  shoppingText: { color: marketplaceColors.primaryDark, fontSize: 25, fontWeight: '900' },
-  support: { color: marketplaceColors.inkMuted, fontSize: 22, textAlign: 'center', marginTop: 48 },
+  shoppingText: { color: marketplaceColors.primaryDark, fontSize: 15, fontWeight: '900' },
+  support: { color: marketplaceColors.inkMuted, fontSize: 12, textAlign: 'center', marginTop: 24 },
   supportLink: { color: marketplaceColors.primaryDark, fontWeight: '900', textDecorationLine: 'underline' },
 });

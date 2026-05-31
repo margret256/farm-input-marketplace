@@ -26,6 +26,9 @@ export default function RootLayout() {
         <Stack.Screen name="auth/otp-verification" />
         <Stack.Screen name="auth/reset-password" />
         <Stack.Screen name="role-selection" />
+        <Stack.Screen name="dealer/onboarding" />
+        <Stack.Screen name="dealer/dashboard" />
+        <Stack.Screen name="dealer/add-product" />
         <Stack.Screen name="product-details" />
         <Stack.Screen name="compare-prices" />
         <Stack.Screen name="wishlist" />

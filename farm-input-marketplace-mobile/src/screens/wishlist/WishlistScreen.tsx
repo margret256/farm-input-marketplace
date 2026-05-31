@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { AppScreen, StaticScreen } from '@/components/marketplace/AppScreen';
@@ -22,19 +23,29 @@ export function WishlistScreen() {
             <View key={item.id} style={[styles.card, marketplaceShadows.card]}>
               <Image source={item.image} style={styles.image} />
               <View style={styles.heart}>
-                <Ionicons name="heart-outline" size={23} color={marketplaceColors.primaryDark} />
+                <Ionicons name="heart-outline" size={16} color={marketplaceColors.primaryDark} />
               </View>
               <View style={styles.body}>
                 <View style={styles.nameRow}>
-                  <Text style={styles.name}>{item.name}</Text>
-                  <Text style={[styles.status, item.status === 'out-of-stock' && styles.out, item.status === 'low-stock' && styles.low]}>
+                  <Text style={styles.name} numberOfLines={1}>{item.name}</Text>
+                  <Text style={[
+                    styles.status,
+                    item.status === 'out-of-stock' && styles.out,
+                    item.status === 'low-stock' && styles.low,
+                  ]}>
                     {item.status === 'out-of-stock' ? 'OUT OF STOCK' : item.status === 'low-stock' ? 'LOW STOCK' : 'IN STOCK'}
                   </Text>
                 </View>
-                <Text style={styles.description}>{item.subtitle}</Text>
+                <Text style={styles.description} numberOfLines={2}>{item.subtitle}</Text>
                 <View style={styles.bottom}>
                   <Text style={styles.price}>{item.price}</Text>
-                  <Pressable style={[styles.cartButton, item.status === 'out-of-stock' && styles.disabledButton]}>
+                  <Pressable
+                    style={[styles.cartButton, item.status === 'out-of-stock' && styles.disabledButton]}
+                    onPress={() => {
+                      if (item.status !== 'out-of-stock') {
+                        router.push('/cart');
+                      }
+                    }}>
                     <Text style={[styles.cartText, item.status === 'out-of-stock' && styles.disabledText]}>
                       {item.status === 'out-of-stock' ? 'Notify Me' : 'Add to Cart'}
                     </Text>
@@ -45,7 +56,7 @@ export function WishlistScreen() {
           ))}
         </View>
       </AppScreen>
-      <FloatingTabBar active="orders" />
+      <FloatingTabBar active="wishlist" />
     </StaticScreen>
   );
 }
@@ -53,29 +64,29 @@ export function WishlistScreen() {
 const styles = StyleSheet.create({
   title: {
     color: '#101710',
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: '900',
   },
   subtitle: {
     color: marketplaceColors.inkSoft,
-    fontSize: 13,
-    lineHeight: 19,
-    marginTop: 4,
+    fontSize: 12,
+    lineHeight: 17,
+    marginTop: 3,
   },
   chips: {
     flexDirection: 'row',
-    gap: 9,
-    marginTop: 18,
-    marginBottom: 14,
+    gap: 7,
+    marginTop: 12,
+    marginBottom: 12,
   },
   chip: {
     backgroundColor: '#EAF4E8',
     color: marketplaceColors.primaryDark,
-    borderRadius: 18,
+    borderRadius: 16,
     overflow: 'hidden',
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    fontSize: 11,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    fontSize: 10,
     fontWeight: '800',
   },
   activeChip: {
@@ -83,7 +94,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   list: {
-    gap: 14,
+    gap: 12,
   },
   card: {
     backgroundColor: '#FFFFFF',
@@ -94,16 +105,16 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 172,
+    height: 100,
     resizeMode: 'cover',
   },
   heart: {
     position: 'absolute',
-    top: 12,
-    right: 12,
-    width: 43,
-    height: 43,
-    borderRadius: 22,
+    top: 10,
+    right: 10,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     backgroundColor: '#F7FAF0',
     alignItems: 'center',
     justifyContent: 'center',
@@ -111,18 +122,18 @@ const styles = StyleSheet.create({
     borderColor: marketplaceColors.primaryDark,
   },
   body: {
-    padding: 16,
+    padding: 12,
   },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    gap: 10,
+    gap: 8,
   },
   name: {
     flex: 1,
     color: '#101710',
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: '800',
   },
   status: {
@@ -130,8 +141,8 @@ const styles = StyleSheet.create({
     color: marketplaceColors.primaryDark,
     borderRadius: 2,
     overflow: 'hidden',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
+    paddingHorizontal: 5,
+    paddingVertical: 2,
     fontSize: 8,
     fontWeight: '900',
   },
@@ -145,30 +156,30 @@ const styles = StyleSheet.create({
   },
   description: {
     color: marketplaceColors.inkSoft,
-    fontSize: 13,
-    lineHeight: 18,
-    marginTop: 7,
+    fontSize: 11,
+    lineHeight: 16,
+    marginTop: 4,
   },
   bottom: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 16,
+    marginTop: 10,
   },
   price: {
     color: marketplaceColors.primaryDark,
-    fontSize: 21,
+    fontSize: 15,
     fontWeight: '900',
   },
   cartButton: {
     backgroundColor: marketplaceColors.primaryDark,
     borderRadius: 6,
-    paddingHorizontal: 22,
-    paddingVertical: 11,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
   },
   cartText: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '900',
   },
   disabledButton: {

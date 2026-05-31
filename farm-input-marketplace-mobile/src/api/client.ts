@@ -1,4 +1,4 @@
-﻿import { create } from 'axios';
+import { create } from 'axios';
 console.log('EXPO_PUBLIC_API_URL:', process.env.EXPO_PUBLIC_API_URL);
 
 export const apiClient = create({
