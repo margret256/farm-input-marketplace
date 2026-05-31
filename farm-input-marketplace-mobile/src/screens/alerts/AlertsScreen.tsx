@@ -63,7 +63,7 @@ const chips = ['All', 'Orders', 'Payments', 'Offers'];
 export function AlertsScreen() {
   return (
     <StaticScreen>
-      <AppScreen notificationDot title="AgroMarket">
+      <AppScreen title="AgroMarket">
         {/* Header */}
         <View style={styles.headerRow}>
           <View>
