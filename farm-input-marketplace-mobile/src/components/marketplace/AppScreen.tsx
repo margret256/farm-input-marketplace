@@ -10,8 +10,6 @@ type AppScreenProps = {
   title?: string;
   back?: boolean;
   help?: boolean;
-  cart?: boolean;
-  notificationDot?: boolean;
   padded?: boolean;
   showHeader?: boolean;
 };
@@ -21,22 +19,12 @@ export function AppScreen({
   title,
   back,
   help,
-  cart,
-  notificationDot,
   padded = true,
   showHeader = true,
 }: AppScreenProps) {
   return (
     <SafeAreaView style={styles.safeArea}>
-      {showHeader ? (
-        <AppHeader
-          back={back}
-          cart={cart}
-          help={help}
-          notificationDot={notificationDot}
-          title={title}
-        />
-      ) : null}
+      {showHeader ? <AppHeader back={back} help={help} title={title} /> : null}
       <ScrollView
         contentContainerStyle={[styles.content, padded && styles.padded]}
         showsVerticalScrollIndicator={false}>

@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import { type Href, router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { tabItems, type AppTabKey } from '@/constants/mock-marketplace';
@@ -9,8 +10,10 @@ type FloatingTabBarProps = {
 };
 
 export function FloatingTabBar({ active }: FloatingTabBarProps) {
+  const insets = useSafeAreaInsets();
+
   return (
-    <View pointerEvents="box-none" style={styles.wrap}>
+    <View pointerEvents="box-none" style={[styles.wrap, { bottom: insets.bottom + 8 }]}>
       <View style={styles.pill}>
         {tabItems.map((item) => {
           const selected = item.key === active;
@@ -20,9 +23,14 @@ export function FloatingTabBar({ active }: FloatingTabBarProps) {
               key={item.key}
               onPress={() => router.push(item.route as Href)}
               style={[styles.item, selected && styles.activeItem]}>
-              <Ionicons name={item.icon} size={25} color={selected ? '#FFFFFF' : '#B7BDC5'} />
-              <Text style={[styles.label, selected && styles.activeLabel]}>{item.label}</Text>
-              {selected ? <View style={styles.underline} /> : null}
+              <Ionicons
+                name={item.icon}
+                size={28}
+                color={selected ? '#FFFFFF' : '#9E9E9E'}
+              />
+              <Text style={[styles.label, selected && styles.activeLabel]}>
+                {item.label}
+              </Text>
             </Pressable>
           );
         })}
@@ -36,48 +44,44 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 24,
     alignItems: 'center',
     zIndex: 30,
   },
   pill: {
-    width: '88%',
-    maxWidth: 390,
-    height: 76,
-    borderRadius: 34,
-    backgroundColor: '#07090E',
+    width: '96%',
+    maxWidth: 400,
+    height: 56,
+    borderRadius: 18,
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#1C2930',
+    borderColor: '#E8F5E9',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingHorizontal: 10,
+    justifyContent: 'space-between',
+    paddingHorizontal: 4,
+    shadowColor: '#212121',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 16,
+    elevation: 6,
   },
   item: {
-    width: 62,
-    height: 58,
-    borderRadius: 18,
+    width: 46,
+    height: 44,
+    borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 3,
+    gap: 1,
   },
   activeItem: {
-    backgroundColor: '#1C2334',
+    backgroundColor: '#1B5E20',
   },
   label: {
-    color: '#B7BDC5',
-    fontSize: 9,
+    color: '#9E9E9E',
+    fontSize: 7,
     fontWeight: '700',
   },
   activeLabel: {
     color: '#FFFFFF',
-  },
-  underline: {
-    width: 36,
-    height: 4,
-    borderRadius: 4,
-    backgroundColor: '#28D1C2',
-    position: 'absolute',
-    bottom: 5,
   },
 });

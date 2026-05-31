@@ -8,16 +8,12 @@ type AppHeaderProps = {
   title?: string;
   back?: boolean;
   help?: boolean;
-  cart?: boolean;
-  notificationDot?: boolean;
 };
 
 export function AppHeader({
   title = 'AgroMarket',
   back = false,
   help = false,
-  cart = false,
-  notificationDot = false,
 }: AppHeaderProps) {
   return (
     <View style={styles.header}>
@@ -32,16 +28,13 @@ export function AppHeader({
         <Text style={styles.title}>{title}</Text>
       </View>
       <View style={styles.actions}>
-        {cart ? (
-          <Pressable accessibilityRole="button" onPress={() => router.push('/cart')} style={styles.iconButton}>
-            <MaterialCommunityIcons name="tractor" size={28} color={marketplaceColors.primaryDark} />
-          </Pressable>
-        ) : null}
+        <Pressable accessibilityRole="button" onPress={() => router.push('/cart')} style={styles.iconButton}>
+          <Ionicons name="cart-outline" size={22} color={marketplaceColors.inkSoft} />
+        </Pressable>
         {help ? <Ionicons name="help-circle-outline" size={28} color={marketplaceColors.inkSoft} /> : null}
-        <View>
-          <Ionicons name="notifications-outline" size={29} color={marketplaceColors.inkSoft} />
-          {notificationDot ? <View style={styles.dot} /> : null}
-        </View>
+        <Pressable accessibilityRole="button" onPress={() => router.push('/alerts')} style={styles.iconButton}>
+          <Ionicons name="notifications-outline" size={22} color={marketplaceColors.inkSoft} />
+        </Pressable>
       </View>
     </View>
   );
@@ -81,14 +74,5 @@ const styles = StyleSheet.create({
     height: 34,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  dot: {
-    position: 'absolute',
-    right: 1,
-    top: 1,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#C62828',
   },
 });

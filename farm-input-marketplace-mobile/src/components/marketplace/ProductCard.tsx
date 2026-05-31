@@ -19,7 +19,9 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
         <Image source={product.image} style={[styles.image, compact && styles.compactImage]} />
         {product.badge ? <Text style={styles.badge}>{product.badge}</Text> : null}
         <View style={styles.heart}>
-          <Ionicons name="heart-outline" size={18} color={marketplaceColors.primaryDark} />
+          <Pressable onPress={() => router.push('/wishlist')}>
+            <Ionicons name="heart-outline" size={18} color={marketplaceColors.primaryDark} />
+          </Pressable>
         </View>
       </View>
       <View style={styles.body}>
@@ -33,7 +35,7 @@ export function ProductCard({ product, compact = false }: ProductCardProps) {
         ) : null}
         <View style={styles.row}>
           <Text style={styles.price}>{product.price}</Text>
-          <Pressable style={styles.addButton}>
+          <Pressable style={styles.addButton} onPress={() => router.push('/cart')}>
             <Ionicons name="add" size={19} color="#FFFFFF" />
           </Pressable>
         </View>
