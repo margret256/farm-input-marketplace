@@ -8,12 +8,14 @@ type AppHeaderProps = {
   title?: string;
   back?: boolean;
   help?: boolean;
+  hideActions?: boolean;
 };
 
 export function AppHeader({
   title = 'AgroMarket',
   back = false,
   help = false,
+  hideActions = false,
 }: AppHeaderProps) {
   return (
     <View style={styles.header}>
@@ -27,15 +29,19 @@ export function AppHeader({
         )}
         <Text style={styles.title}>{title}</Text>
       </View>
-      <View style={styles.actions}>
-        <Pressable accessibilityRole="button" onPress={() => router.push('/cart')} style={styles.iconButton}>
-          <Ionicons name="cart-outline" size={22} color={marketplaceColors.inkSoft} />
-        </Pressable>
-        {help ? <Ionicons name="help-circle-outline" size={28} color={marketplaceColors.inkSoft} /> : null}
-        <Pressable accessibilityRole="button" onPress={() => router.push('/alerts')} style={styles.iconButton}>
-          <Ionicons name="notifications-outline" size={22} color={marketplaceColors.inkSoft} />
-        </Pressable>
-      </View>
+       <View style={styles.actions}>
+         {!hideActions && (
+           <>
+             <Pressable accessibilityRole="button" onPress={() => router.push('/cart')} style={styles.iconButton}>
+               <Ionicons name="cart-outline" size={22} color={marketplaceColors.inkSoft} />
+             </Pressable>
+             {help ? <Ionicons name="help-circle-outline" size={28} color={marketplaceColors.inkSoft} /> : null}
+             <Pressable accessibilityRole="button" onPress={() => router.push('/tabs/alerts')} style={styles.iconButton}>
+               <Ionicons name="notifications-outline" size={22} color={marketplaceColors.inkSoft} />
+             </Pressable>
+           </>
+         )}
+       </View>
     </View>
   );
 }
