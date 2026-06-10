@@ -4,6 +4,8 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export type AppTabKey = 'home' | 'market' | 'orders' | 'alerts' | 'wishlist' | 'profile';
 
+export type DealerAppTabKey = 'home' | 'market' | 'cart' | 'orders' | 'profile';
+
 export type ProductItem = {
   id: string;
   name: string;
@@ -38,6 +40,19 @@ export const tabItems: {
   { key: 'alerts', label: 'Alerts', route: '/alerts', icon: 'notifications' },
   { key: 'wishlist', label: 'Wishlist', route: '/wishlist', icon: 'heart' },
   { key: 'profile', label: 'Profile', route: '/profile', icon: 'person' },
+];
+
+export const dealerTabItems: {
+  key: DealerAppTabKey;
+  label: string;
+  route: string;
+  icon: ComponentProps<typeof Ionicons>['name'];
+}[] = [
+  { key: 'home', label: 'Home', route: '/dealer/dashboard', icon: 'home' },
+  { key: 'market', label: 'Market', route: '/dealer/inventory', icon: 'storefront' },
+  { key: 'cart', label: 'AddProduct', route: '/dealer/add-product', icon: 'cube' },
+  { key: 'orders', label: 'Orders', route: '/dealer/orders', icon: 'receipt' },
+  { key: 'profile', label: 'Profile', route: '/dealer/profile', icon: 'person' },
 ];
 
 export const categories: {
