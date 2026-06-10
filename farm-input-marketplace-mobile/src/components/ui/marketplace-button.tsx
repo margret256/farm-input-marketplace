@@ -1,6 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
 import type { ComponentProps, ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 import { marketplaceColors, marketplaceShadows } from '@/constants/marketplace';
 
@@ -29,6 +29,7 @@ export function MarketplaceButton({
   loading = false,
   children,
 }: MarketplaceButtonProps) {
+  const variantStyle = styles[variant] ?? styles.primary;
   const textStyle = [
     styles.label,
     variant === 'secondary' || variant === 'outlined' ? styles.labelDark : styles.labelLight,
@@ -41,25 +42,32 @@ export function MarketplaceButton({
       accessibilityRole="button"
       disabled={disabled || loading}
       onPress={onPress}
-      style={({ pressed }) => [
-        styles.button,
-        styles[variant],
-        variant === 'primary' && marketplaceShadows.button,
+      android_ripple={variant === 'primary' ? { color: 'rgba(255,255,255,0.18)' } : undefined}
+      style={[
+        styles.pressable,
         style,
         (disabled || loading) && styles.disabled,
-        pressed && !disabled && !loading && styles.pressed,
       ]}>
-      {children}
-      {icon && iconPosition === 'left' ? <Ionicons name={icon} size={17} color={iconColor} /> : null}
-      <Text style={textStyle}>{loading ? 'Please wait...' : title}</Text>
-      {icon && iconPosition === 'right' ? <Ionicons name={icon} size={17} color={iconColor} /> : null}
+      <View style={[styles.button, variantStyle, variant === 'primary' && marketplaceShadows.button]}>
+        {children}
+        {icon && iconPosition === 'left' ? <Ionicons name={icon} size={17} color={iconColor} /> : null}
+        <Text style={textStyle}>{loading ? 'Please wait...' : title}</Text>
+        {icon && iconPosition === 'right' ? <Ionicons name={icon} size={17} color={iconColor} /> : null}
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
+  pressable: {
+    width: '100%',
+    alignSelf: 'stretch',
+    flexShrink: 0,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
   button: {
-    minHeight: 44,
+    minHeight: 50,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
@@ -67,6 +75,8 @@ const styles = StyleSheet.create({
     gap: 8,
     paddingHorizontal: 18,
     width: '100%',
+    alignSelf: 'stretch',
+    flexShrink: 0,
   },
   primary: {
     backgroundColor: marketplaceColors.primary,
@@ -77,7 +87,9 @@ const styles = StyleSheet.create({
     backgroundColor: marketplaceColors.card,
   },
   inverted: {
-    backgroundColor: '#202620',
+    backgroundColor: marketplaceColors.primaryDark,
+    borderWidth: 1,
+    borderColor: marketplaceColors.primaryDark,
   },
   outlined: {
     backgroundColor: marketplaceColors.card,
@@ -88,16 +100,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '800',
     letterSpacing: 0,
+    lineHeight: 18,
   },
   labelLight: {
     color: '#FFFFFF',
   },
   labelDark: {
     color: marketplaceColors.primaryDark,
-  },
-  pressed: {
-    transform: [{ scale: 0.985 }],
-    opacity: 0.92,
   },
   disabled: {
     opacity: 0.9,
