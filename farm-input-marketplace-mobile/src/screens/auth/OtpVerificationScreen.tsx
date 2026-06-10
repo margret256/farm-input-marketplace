@@ -51,9 +51,9 @@ export function OtpVerificationScreen() {
       const response = await verifyOtp({ identifier, code });
       await setSession(response.accessToken, response.user);
       if (role === 'dealer' || response.user.role === 'DEALER') {
-        router.replace('/dealer/dashboard');
+        router.replace('/auth/login');
       } else {
-        router.replace('/home');
+        router.replace('/home' as any);
       }
     } catch (error) {
       Alert.alert('Verification failed', getApiErrorMessage(error, 'Try again in a moment.'));
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
     padding: 18,
-    marginTop: 36,
+    marginTop: 24,
   },
   title: {
     color: marketplaceColors.primaryDark,
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 9,
-    marginTop: 28,
+    marginTop: 24,
   },
   otpBox: {
     flex: 1,
@@ -184,9 +184,11 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   button: {
-    marginTop: 26,
-    minHeight: 48,
+    marginTop: 22,
+    minHeight: 52,
     width: '100%',
+    backgroundColor: marketplaceColors.primaryDark,
+    borderColor: marketplaceColors.primaryDark,
   },
   helpRow: {
     flexDirection: 'row',
@@ -204,6 +206,6 @@ const styles = StyleSheet.create({
     color: marketplaceColors.inkMuted,
     fontSize: 9,
     textAlign: 'center',
-    marginTop: 82,
+    marginTop: 34,
   },
 });
