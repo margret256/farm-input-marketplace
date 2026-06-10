@@ -1,4 +1,4 @@
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { useState } from 'react';
@@ -8,6 +8,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppHeader } from '@/components/marketplace/AppHeader';
 import { MarketplaceButton } from '@/components/ui/marketplace-button';
 import { marketplaceColors, marketplaceShadows } from '@/constants/marketplace';
+import { uploadDealerDocument } from '@/api/dealers';
 import { registerDealer } from '@/services/auth.service';
 
 const steps = ['Business', 'Identity', 'Documents'];
@@ -49,9 +50,9 @@ export function DealerOnboardingScreen() {
         setDocuments((prev) => ({
           ...prev,
           [type]: {
-            name: 'document.jpg',
+            name: file.fileName ?? `${type}.jpg`,
             uri: file.uri,
-            mimeType: 'image/jpeg',
+            mimeType: file.mimeType ?? 'image/jpeg',
           },
         }));
       }
@@ -76,8 +77,24 @@ export function DealerOnboardingScreen() {
       return;
     }
 
+    if (!documents.license || !documents.permit) {
+      Alert.alert('Missing documents', 'Upload both the trade license and business permit.');
+      return;
+    }
+
     try {
       setLoading(true);
+      const uploadedDocuments = await Promise.all([
+        uploadDealerDocument({
+          type: 'Trade License',
+          ...documents.license,
+        }),
+        uploadDealerDocument({
+          type: 'Business Permit',
+          ...documents.permit,
+        }),
+      ]);
+
       const payload = {
         businessName,
         ownerName,
@@ -86,9 +103,13 @@ export function DealerOnboardingScreen() {
         email,
         password,
         confirmPassword,
+        documents: uploadedDocuments,
       };
       await registerDealer(payload);
-      router.replace('/auth/login');
+      router.replace({
+        pathname: '/auth/otp-verification',
+        params: { identifier: email, role: 'dealer' },
+      });
     } catch (error) {
       const err = error as { response?: { data?: { message?: string } } };
       Alert.alert('Submission failed', err.response?.data?.message ?? 'Try again in a moment.');
@@ -107,7 +128,7 @@ export function DealerOnboardingScreen() {
 
   return (
     <SafeAreaView style={styles.screen}>
-      <AppHeader title="AgroConnect" />
+       <AppHeader title="AgroConnect" hideActions={true} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
         {/* Card */}
@@ -303,24 +324,16 @@ export function DealerOnboardingScreen() {
             loading={loading}
             style={styles.submitButton}
           />
+
+          {/* Login redirect */}
+          <View style={styles.loginRow}>
+            <Text style={styles.loginText}>Already have an account?</Text>
+            <Pressable onPress={() => router.push('/auth/login')}>
+              <Text style={styles.loginLink}> Sign In</Text>
+            </Pressable>
+          </View>
         </View>
 
-        {/* Features */}
-        {[
-          { icon: 'headset-outline' as const, title: '24/7 Support', subtitle: 'Dedicated dealer desk' },
-          { icon: 'wallet-outline' as const, title: 'Fast Settlements', subtitle: 'Get paid in T+1 days' },
-          { icon: 'trending-up-outline' as const, title: 'Wide Reach', subtitle: '10,000+ active farmers' },
-        ].map((feature) => (
-          <View key={feature.title} style={styles.featureRow}>
-            <View style={styles.featureIcon}>
-              <Ionicons name={feature.icon} size={20} color={marketplaceColors.primary} />
-            </View>
-            <View>
-              <Text style={styles.featureTitle}>{feature.title}</Text>
-              <Text style={styles.featureSubtitle}>{feature.subtitle}</Text>
-            </View>
-          </View>
-        ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -428,6 +441,24 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#101710',
   },
+  passwordRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 10,
+    marginBottom: 8,
+  },
+  passwordInput: {
+    flex: 1,
+    height: 42,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#DDE6D6',
+    backgroundColor: '#F7FAF0',
+    paddingHorizontal: 12,
+    fontSize: 13,
+    color: '#101710',
+  },
   docTitle: {
     fontSize: 16,
     fontWeight: '900',
@@ -493,44 +524,20 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 10,
   },
-  featureRow: {
+  loginRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    marginBottom: 16,
-  },
-  featureIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: '#E8F5E9',
-    alignItems: 'center',
     justifyContent: 'center',
-  },
-  featureTitle: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: '#101710',
-  },
-  featureSubtitle: {
-    fontSize: 11,
-    color: marketplaceColors.inkSoft,
-    marginTop: 2,
-  },
-  passwordRow: {
-    height: 42,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#DDE6D6',
-    backgroundColor: '#F7FAF0',
-    paddingHorizontal: 12,
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    marginTop: 20,
   },
-  passwordInput: {
-    flex: 1,
-    fontSize: 13,
-    color: '#101710',
+  loginText: {
+    fontSize: 12,
+    color: marketplaceColors.inkSoft,
+    fontWeight: '600',
+  },
+  loginLink: {
+    fontSize: 12,
+    color: marketplaceColors.primaryDark,
+    fontWeight: '900',
   },
 });
