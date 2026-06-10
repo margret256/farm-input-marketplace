@@ -67,7 +67,7 @@ export function CartScreen() {
         </View>
       </ScrollView>
       <View style={[styles.bottom, { marginBottom: insets.bottom + 64 }]}>
-        <Pressable onPress={() => router.push('/market')} style={styles.continueButton}>
+        <Pressable onPress={() => router.push('/tabs/market')} style={styles.continueButton}>
           <Text style={styles.continueText}>Continue Shopping</Text>
         </Pressable>
         <Pressable onPress={() => router.push('/checkout')} style={styles.checkoutButton}>
