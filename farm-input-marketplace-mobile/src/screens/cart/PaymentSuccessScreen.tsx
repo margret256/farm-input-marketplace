@@ -57,7 +57,7 @@ export function PaymentSuccessScreen() {
           <Ionicons name="car-outline" size={20} color="#FFFFFF" />
           <Text style={styles.trackText}>Track Order</Text>
         </Pressable>
-        <Pressable onPress={() => router.push('/market')} style={styles.shoppingButton}>
+        <Pressable onPress={() => router.push('/tabs/market')} style={styles.shoppingButton}>
           <Ionicons name="basket-outline" size={20} color={marketplaceColors.primaryDark} />
           <Text style={styles.shoppingText}>Continue Shopping</Text>
         </Pressable>
