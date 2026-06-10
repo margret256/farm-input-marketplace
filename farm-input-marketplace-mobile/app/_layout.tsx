@@ -28,7 +28,12 @@ export default function RootLayout() {
         <Stack.Screen name="role-selection" />
         <Stack.Screen name="dealer/onboarding" />
         <Stack.Screen name="dealer/dashboard" />
+        <Stack.Screen name="dealer/inventory" />
+        <Stack.Screen name="dealer/orders" />
         <Stack.Screen name="dealer/add-product" />
+        <Stack.Screen name="dealer/analytics" />
+        <Stack.Screen name="dealer/notifications" />
+        <Stack.Screen name="dealer/profile" />
         <Stack.Screen name="product-details" />
         <Stack.Screen name="compare-prices" />
         <Stack.Screen name="wishlist" />
