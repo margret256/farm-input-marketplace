@@ -31,7 +31,7 @@ export function LoginScreen() {
       if (response.user.role === 'DEALER') {
         router.replace('/dealer/dashboard');
       } else {
-        router.replace('/home');
+        router.replace('/tabs/home');
       }
     } catch (error) {
       Alert.alert('Login failed', getApiErrorMessage(error, 'Check your details and try again.'));
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 24,
+    padding: 22,
     marginHorizontal: 0,
     alignItems: 'stretch',
   },
@@ -144,8 +144,8 @@ const styles = StyleSheet.create({
     letterSpacing: 0,
   },
   form: {
-    gap: 16,
-    marginTop: 28,
+    gap: 14,
+    marginTop: 24,
   },
   rowBetween: {
     flexDirection: 'row',
@@ -176,10 +176,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   loginButton: {
-    marginTop: 25,
+    marginTop: 22,
     minHeight: 52,
     borderRadius: 10,
     width: '100%',
+    backgroundColor: marketplaceColors.primaryDark,
+    borderColor: marketplaceColors.primaryDark,
   },
   dividerRow: {
     flexDirection: 'row',
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 30,
+    marginTop: 24,
   },
   bottomText: {
     color: marketplaceColors.inkMuted,
