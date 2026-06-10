@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 
 import { AppHeader } from '@/components/marketplace/AppHeader';
-import { FloatingTabBar } from '@/components/marketplace/FloatingTabBar';
+import { DealerFloatingTabBar } from '@/components/marketplace/DealerFloatingTabBar';
 import { appImages } from '@/constants/mock-marketplace';
 import { marketplaceColors, marketplaceShadows } from '@/constants/marketplace';
 
@@ -17,9 +17,9 @@ const stats = [
 
 const tools = [
   { label: 'Product Management', subtitle: 'Edit listings, prices, and stock levels.', icon: 'create-outline', bg: '#E8F5E9', iconColor: marketplaceColors.primary, route: '/dealer/add-product' },
-  { label: 'Order Management', subtitle: 'Track sales and process customer orders.', icon: 'receipt-outline', bg: '#FFF3E0', iconColor: '#F57C00', route: '/orders' },
+  { label: 'Order Management', subtitle: 'Track sales and process customer orders.', icon: 'receipt-outline', bg: '#FFF3E0', iconColor: '#F57C00', route: '/dealer/orders' },
   { label: 'Delivery Management', subtitle: 'Manage logistics and fleet tracking.', icon: 'car-outline', bg: '#FFF3E0', iconColor: '#F57C00', route: '/track-order' },
-  { label: 'Business Analytics', subtitle: 'Detailed performance and growth insights.', icon: 'bar-chart-outline', bg: '#E8F5E9', iconColor: marketplaceColors.primary, route: '/dealer/dashboard' },
+  { label: 'Business Analytics', subtitle: 'Detailed performance and growth insights.', icon: 'bar-chart-outline', bg: '#E8F5E9', iconColor: marketplaceColors.primary, route: '/dealer/analytics' },
 ];
 
 const activity = [
@@ -31,12 +31,12 @@ const activity = [
 export function DealerDashboardScreen() {
   return (
     <SafeAreaView style={styles.screen}>
-      <AppHeader title="AgroConnect" />
+       <AppHeader title="AgroConnect" hideActions={true} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
         {/* Header */}
         <Text style={styles.title}>Dealer Dashboard</Text>
-        <Text style={styles.subtitle}>Welcome back, Harvesters Co. Here's your overview.</Text>
+        <Text style={styles.subtitle}>Welcome back, Harvesters Co. Here&apos;s your overview.</Text>
 
         {/* Stats grid */}
         <View style={styles.statsGrid}>
@@ -73,9 +73,9 @@ export function DealerDashboardScreen() {
             <Text style={styles.promoSubtitle}>
               Get a 15% discount on bulk orders of hybrid maize and wheat seeds.
             </Text>
-            <Pressable style={styles.promoButton}>
-              <Text style={styles.promoButtonText}>View Catalog</Text>
-            </Pressable>
+      <Pressable style={styles.promoButton} onPress={() => router.push('/dealer/inventory')}>
+        <Text style={styles.promoButtonText}>View Catalog</Text>
+      </Pressable>
           </View>
           <Image source={appImages.harvest} style={styles.promoImage} />
           <View style={styles.promoOverlay} />
@@ -112,10 +112,10 @@ export function DealerDashboardScreen() {
           ))}
         </View>
 
-      </ScrollView>
-      <FloatingTabBar active="home" />
-    </SafeAreaView>
-  );
+       </ScrollView>
+       <DealerFloatingTabBar active="home" />
+     </SafeAreaView>
+   );
 }
 
 const styles = StyleSheet.create({
