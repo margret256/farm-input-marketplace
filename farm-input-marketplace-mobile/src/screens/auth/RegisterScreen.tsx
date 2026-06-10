@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Link, router, useLocalSearchParams } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 
@@ -177,8 +177,8 @@ const styles = StyleSheet.create({
   formCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 16,
-    padding: 20,
-    marginTop: 24,
+    padding: 18,
+    marginTop: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.06,
@@ -187,13 +187,13 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
   },
   form: {
-    gap: 14,
+    gap: 12,
   },
   termsRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 9,
-    marginTop: 20,
+    marginTop: 16,
   },
   checkbox: {
     width: 16,
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   button: {
-    marginTop: 20,
+    marginTop: 18,
     minHeight: 52,
     borderRadius: 10,
     backgroundColor: '#1A5E20',
@@ -288,7 +288,7 @@ const styles = StyleSheet.create({
   },
   loginLink: {
     alignItems: 'center',
-    paddingVertical: 20,
+    paddingVertical: 16,
   },
   loginText: {
     color: marketplaceColors.inkMuted,
