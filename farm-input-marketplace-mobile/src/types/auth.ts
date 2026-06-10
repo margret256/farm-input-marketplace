@@ -27,6 +27,14 @@ export type DealerRegisterPayload = {
   email: string;
   password: string;
   confirmPassword: string;
+  documents?: DealerDocumentPayload[];
+};
+
+export type DealerDocumentPayload = {
+  type: string;
+  name: string;
+  url: string;
+  mimeType?: string;
 };
 
 export type LoginPayload = {
@@ -48,4 +56,10 @@ export type RegisterResponse = {
   message: string;
   otpSent: boolean;
   user: AuthUser;
+  dealer?: {
+    id: string;
+    businessName: string;
+    verificationStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
+    documents?: DealerDocumentPayload[];
+  };
 };
