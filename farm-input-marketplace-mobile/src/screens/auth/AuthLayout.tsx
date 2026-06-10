@@ -39,11 +39,14 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 20,
     paddingVertical: 18,
+    paddingBottom: 44,
   },
   centered: {
     justifyContent: 'center',
   },
   inner: {
     width: '100%',
+    maxWidth: 430,
+    alignSelf: 'center',
   },
 });
