@@ -3,13 +3,13 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppHeader } from '@/components/marketplace/AppHeader';
-import { FloatingTabBar } from '@/components/marketplace/FloatingTabBar';
+import { DealerFloatingTabBar } from '@/components/marketplace/DealerFloatingTabBar';
 import { marketplaceColors } from '@/constants/marketplace';
 
 export function AddProductScreen() {
   return (
     <SafeAreaView style={styles.screen}>
-      <AppHeader title="AgroConnect" />
+       <AppHeader title="AgroConnect" hideActions={true} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
         {/* Breadcrumb */}
@@ -121,22 +121,10 @@ export function AddProductScreen() {
           </View>
         </View>
 
-      </ScrollView>
-
-      {/* Bottom buttons */}
-      <View style={styles.bottom}>
-        <Pressable style={styles.draftButton}>
-          <Text style={styles.draftText}>Save Draft</Text>
-        </Pressable>
-        <Pressable style={styles.publishButton}>
-          <Ionicons name="rocket-outline" size={16} color="#FFFFFF" />
-          <Text style={styles.publishText}>Publish Product</Text>
-        </Pressable>
-      </View>
-
-      <FloatingTabBar active="market" />
-    </SafeAreaView>
-  );
+       </ScrollView>
+       <DealerFloatingTabBar active="cart" />
+     </SafeAreaView>
+   );
 }
 
 const styles = StyleSheet.create({
