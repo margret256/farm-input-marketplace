@@ -38,7 +38,7 @@ export function ForgotPasswordScreen() {
 
 const styles = StyleSheet.create({
   heroWrap: {
-    marginTop: 40,
+    marginTop: 24,
   },
   title: {
     color: '#000000',
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     textAlign: 'center',
     letterSpacing: 0,
-    marginTop: 38,
+    marginTop: 28,
   },
   subtitle: {
     color: marketplaceColors.inkSoft,
@@ -57,16 +57,19 @@ const styles = StyleSheet.create({
     marginTop: 11,
   },
   form: {
-    gap: 20,
-    marginTop: 30,
+    gap: 18,
+    marginTop: 26,
   },
   button: {
     marginTop: 0,
     width: '100%',
+    minHeight: 52,
+    backgroundColor: marketplaceColors.primaryDark,
+    borderColor: marketplaceColors.primaryDark,
   },
   backLink: {
     alignItems: 'center',
-    marginTop: 66,
+    marginTop: 36,
   },
   backText: {
     color: marketplaceColors.primaryDark,
