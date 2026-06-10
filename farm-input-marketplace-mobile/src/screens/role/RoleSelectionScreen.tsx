@@ -49,7 +49,7 @@ export function RoleSelectionScreen() {
   return (
     <AppScreen title="AgroMarket">
       <View style={styles.container}>
-        <Text style={styles.title}>Who are you?</Text>
+        <Text style={styles.title}>Choose your role</Text>
         <Text style={styles.subtitle}>
           Select your primary role to customize your AgroMarket experience.
         </Text>
@@ -110,7 +110,8 @@ export function RoleSelectionScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
+    minHeight: 560,
     justifyContent: 'center',
     paddingVertical: 20,
   },
@@ -207,9 +208,10 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 24,
-    minHeight: 48,
+    minHeight: 52,
     width: '100%',
     backgroundColor: marketplaceColors.primaryDark,
+    borderColor: marketplaceColors.primaryDark,
   },
   brandRow: {
     marginTop: 20,
