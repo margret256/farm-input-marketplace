@@ -4,7 +4,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export type AppTabKey = 'home' | 'market' | 'orders' | 'alerts' | 'wishlist' | 'profile';
 
-export type DealerAppTabKey = 'home' | 'market' | 'cart' | 'orders' | 'profile';
+export type DealerAppTabKey = 'home' | 'market' | 'cart' | 'orders' | 'analytics' | 'profile';
 
 export type ProductItem = {
   id: string;
@@ -34,12 +34,12 @@ export const tabItems: {
   route: string;
   icon: ComponentProps<typeof Ionicons>['name'];
 }[] = [
-  { key: 'home', label: 'Home', route: '/home', icon: 'home' },
-  { key: 'market', label: 'Market', route: '/market', icon: 'storefront' },
-  { key: 'orders', label: 'Orders', route: '/orders', icon: 'receipt' },
-  { key: 'alerts', label: 'Alerts', route: '/alerts', icon: 'notifications' },
-  { key: 'wishlist', label: 'Wishlist', route: '/wishlist', icon: 'heart' },
-  { key: 'profile', label: 'Profile', route: '/profile', icon: 'person' },
+  { key: 'home', label: 'Home', route: '/tabs/home', icon: 'home' },
+  { key: 'market', label: 'Market', route: '/tabs/market', icon: 'storefront' },
+  { key: 'orders', label: 'Orders', route: '/tabs/orders', icon: 'receipt' },
+  { key: 'alerts', label: 'Alerts', route: '/tabs/alerts', icon: 'notifications' },
+  { key: 'wishlist', label: 'Wishlist', route: '/tabs/wishlist', icon: 'heart' },
+  { key: 'profile', label: 'Profile', route: '/tabs/profile', icon: 'person' },
 ];
 
 export const dealerTabItems: {
@@ -52,6 +52,7 @@ export const dealerTabItems: {
   { key: 'market', label: 'Market', route: '/dealer/inventory', icon: 'storefront' },
   { key: 'cart', label: 'AddProduct', route: '/dealer/add-product', icon: 'cube' },
   { key: 'orders', label: 'Orders', route: '/dealer/orders', icon: 'receipt' },
+  { key: 'analytics', label: 'Analytics', route: '/dealer/analytics', icon: 'bar-chart' },
   { key: 'profile', label: 'Profile', route: '/dealer/profile', icon: 'person' },
 ];
 
