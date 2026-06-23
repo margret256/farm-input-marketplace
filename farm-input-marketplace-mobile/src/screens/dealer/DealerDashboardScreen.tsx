@@ -16,7 +16,7 @@ const stats = [
 ];
 
 const tools = [
-  { label: 'Product Management', subtitle: 'Edit listings, prices, and stock levels.', icon: 'create-outline', bg: '#E8F5E9', iconColor: marketplaceColors.primary, route: '/dealer/add-product' },
+  { label: 'Product Management', subtitle: 'Edit listings, prices, and stock levels.', icon: 'create-outline', bg: '#E8F5E9', iconColor: marketplaceColors.primary, route: '/dealer/inventory' },
   { label: 'Order Management', subtitle: 'Track sales and process customer orders.', icon: 'receipt-outline', bg: '#FFF3E0', iconColor: '#F57C00', route: '/dealer/orders' },
   { label: 'Delivery Management', subtitle: 'Manage logistics and fleet tracking.', icon: 'car-outline', bg: '#FFF3E0', iconColor: '#F57C00', route: '/track-order' },
   { label: 'Business Analytics', subtitle: 'Detailed performance and growth insights.', icon: 'bar-chart-outline', bg: '#E8F5E9', iconColor: marketplaceColors.primary, route: '/dealer/analytics' },
