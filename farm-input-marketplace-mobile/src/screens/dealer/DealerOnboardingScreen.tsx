@@ -1,8 +1,10 @@
+// app/dealer-onboarding.tsx
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { router } from 'expo-router';
-import { useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState, useEffect } from 'react';
+import { Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppHeader } from '@/components/marketplace/AppHeader';
@@ -32,10 +34,72 @@ export function DealerOnboardingScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(false);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
   const [documents, setDocuments] = useState<{
     license?: UploadedDoc;
     permit?: UploadedDoc;
   }>({});
+
+  // Request location permissions on mount
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required to set your business location.');
+      }
+    })();
+  }, []);
+
+  // Get current location
+  async function getCurrentLocation() {
+    try {
+      setLocationLoading(true);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      
+      if (status !== 'granted') {
+        Alert.alert('Permission Denied', 'Location permission is required to set your business location.');
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+
+      const { latitude, longitude } = location.coords;
+      setLatitude(latitude);
+      setLongitude(longitude);
+
+      // Reverse geocode to get address
+      const address = await reverseGeocode(latitude, longitude);
+      setBusinessLocation(address);
+
+      Alert.alert('Location Set', 'Your business location has been set successfully!');
+    } catch (error) {
+      console.error('Location error:', error);
+      Alert.alert('Error', 'Failed to get your location. Please try again or enter manually.');
+    } finally {
+      setLocationLoading(false);
+    }
+  }
+
+  // Reverse geocode coordinates to address
+  async function reverseGeocode(lat: number, lng: number): Promise<string> {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`
+      );
+      const data = await response.json();
+      
+      if (data && data.display_name) {
+        return data.display_name;
+      }
+      return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    } catch {
+      return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    }
+  }
 
   async function handleDocumentPick(type: DocumentType) {
     try {
@@ -64,6 +128,11 @@ export function DealerOnboardingScreen() {
   async function handleSubmit() {
     if (!businessName || !ownerName || !businessLocation || !phone || !email) {
       Alert.alert('Missing details', 'Fill in all required fields.');
+      return;
+    }
+
+    if (!latitude || !longitude) {
+      Alert.alert('Location Required', 'Please set your business location by tapping "Get Location".');
       return;
     }
 
@@ -103,6 +172,8 @@ export function DealerOnboardingScreen() {
         email,
         password,
         confirmPassword,
+        latitude,
+        longitude,
         documents: uploadedDocuments,
       };
       await registerDealer(payload);
@@ -110,9 +181,12 @@ export function DealerOnboardingScreen() {
         pathname: '/auth/otp-verification',
         params: { identifier: email, role: 'dealer' },
       });
-    } catch (error) {
-      const err = error as { response?: { data?: { message?: string } } };
-      Alert.alert('Submission failed', err.response?.data?.message ?? 'Try again in a moment.');
+    } catch (error: any) {
+      console.error('Submission error:', error);
+      const errorMessage = error?.response?.data?.message ||
+                          error?.message ||
+                          'Submission failed. Please try again.';
+      Alert.alert('Submission failed', errorMessage);
     } finally {
       setLoading(false);
     }
@@ -128,7 +202,7 @@ export function DealerOnboardingScreen() {
 
   return (
     <SafeAreaView style={styles.screen}>
-       <AppHeader title="AgroConnect" hideActions={true} />
+      <AppHeader title="AgroConnect" hideActions={true} />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
 
         {/* Card */}
@@ -183,18 +257,42 @@ export function DealerOnboardingScreen() {
             />
           </View>
 
+          {/* Location Field with Get Location Button */}
           <View style={styles.fieldWrap}>
             <View style={styles.fieldLabelRow}>
               <Ionicons name="location-outline" size={13} color={marketplaceColors.inkMuted} />
               <Text style={styles.fieldLabel}>Business Location</Text>
             </View>
-            <TextInput
-              style={styles.fieldInput}
-              placeholder="Street address, City, Province"
-              placeholderTextColor="#BCBCBC"
-              value={businessLocation}
-              onChangeText={setBusinessLocation}
-            />
+            <View style={styles.locationRow}>
+              <TextInput
+                style={[styles.fieldInput, styles.locationInput]}
+                placeholder="Enter address or tap 'Get Location'"
+                placeholderTextColor="#BCBCBC"
+                value={businessLocation}
+                onChangeText={setBusinessLocation}
+                editable={true}
+              />
+              <TouchableOpacity 
+                style={styles.locationButton} 
+                onPress={getCurrentLocation}
+                disabled={locationLoading}
+                activeOpacity={0.7}
+              >
+                {locationLoading ? (
+                  <ActivityIndicator size="small" color="#FFFFFF" />
+                ) : (
+                  <>
+                    <Ionicons name="locate" size={16} color="#FFFFFF" />
+                    <Text style={styles.locationButtonText}>Get</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+            {latitude && longitude && (
+              <Text style={styles.coordinatesText}>
+                📍 {latitude.toFixed(6)}, {longitude.toFixed(6)}
+              </Text>
+            )}
           </View>
 
           <View style={styles.fieldWrap}>
@@ -228,6 +326,7 @@ export function DealerOnboardingScreen() {
             />
           </View>
 
+          {/* Password Field with Toggle */}
           <View style={styles.fieldWrap}>
             <View style={styles.fieldLabelRow}>
               <Ionicons name="lock-closed-outline" size={13} color={marketplaceColors.inkMuted} />
@@ -235,23 +334,28 @@ export function DealerOnboardingScreen() {
             </View>
             <View style={styles.passwordRow}>
               <TextInput
-                style={styles.passwordInput}
+                style={[styles.fieldInput, styles.passwordInput]}
                 placeholder="Enter password (min 8 characters)"
                 placeholderTextColor="#BCBCBC"
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={setPassword}
               />
-              <Pressable onPress={() => setShowPassword(!showPassword)}>
+              <TouchableOpacity 
+                style={styles.eyeButton} 
+                onPress={() => setShowPassword(!showPassword)}
+                activeOpacity={0.7}
+              >
                 <Ionicons
                   name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
                   color={marketplaceColors.inkMuted}
                 />
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
 
+          {/* Confirm Password Field with Toggle */}
           <View style={styles.fieldWrap}>
             <View style={styles.fieldLabelRow}>
               <Ionicons name="refresh-circle-outline" size={13} color={marketplaceColors.inkMuted} />
@@ -259,20 +363,24 @@ export function DealerOnboardingScreen() {
             </View>
             <View style={styles.passwordRow}>
               <TextInput
-                style={styles.passwordInput}
+                style={[styles.fieldInput, styles.passwordInput]}
                 placeholder="Confirm your password"
                 placeholderTextColor="#BCBCBC"
                 secureTextEntry={!showConfirmPassword}
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
               />
-              <Pressable onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
+              <TouchableOpacity 
+                style={styles.eyeButton} 
+                onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                activeOpacity={0.7}
+              >
                 <Ionicons
                   name={showConfirmPassword ? 'eye-off-outline' : 'eye-outline'}
                   size={20}
                   color={marketplaceColors.inkMuted}
                 />
-              </Pressable>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -281,24 +389,32 @@ export function DealerOnboardingScreen() {
 
           <View style={styles.docWrap}>
             <Text style={styles.docLabel}>Trade License (PDF or JPEG)</Text>
-            <Pressable style={styles.uploadBox} onPress={() => handleDocumentPick('license')}>
+            <TouchableOpacity 
+              style={styles.uploadBox} 
+              onPress={() => handleDocumentPick('license')}
+              activeOpacity={0.7}
+            >
               <Ionicons name="document-outline" size={32} color={marketplaceColors.primary} />
               <Text style={styles.uploadText}>
                 {documents.license ? documents.license.name : 'Click to upload License'}
               </Text>
               <Text style={styles.uploadLimit}>MAX 10MB</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.docWrap}>
             <Text style={styles.docLabel}>Business Permit (PDF or JPEG)</Text>
-            <Pressable style={styles.uploadBox} onPress={() => handleDocumentPick('permit')}>
+            <TouchableOpacity 
+              style={styles.uploadBox} 
+              onPress={() => handleDocumentPick('permit')}
+              activeOpacity={0.7}
+            >
               <Ionicons name="shield-checkmark-outline" size={32} color={marketplaceColors.primary} />
               <Text style={styles.uploadText}>
                 {documents.permit ? documents.permit.name : 'Click to upload Permit'}
               </Text>
               <Text style={styles.uploadLimit}>MAX 10MB</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
 
           {/* Disclaimer */}
@@ -328,9 +444,9 @@ export function DealerOnboardingScreen() {
           {/* Login redirect */}
           <View style={styles.loginRow}>
             <Text style={styles.loginText}>Already have an account?</Text>
-            <Pressable onPress={() => router.push('/auth/login')}>
+            <TouchableOpacity onPress={() => router.push('/auth/login')}>
               <Text style={styles.loginLink}> Sign In</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -432,7 +548,7 @@ const styles = StyleSheet.create({
     color: '#101710',
   },
   fieldInput: {
-    height: 42,
+    height: 44,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#DDE6D6',
@@ -440,24 +556,55 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     fontSize: 13,
     color: '#101710',
+  },
+  locationRow: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  locationInput: {
+    flex: 1,
+  },
+  locationButton: {
+    backgroundColor: marketplaceColors.primary,
+    borderRadius: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    minWidth: 60,
+    justifyContent: 'center',
+    height: 44,
+  },
+  locationButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    fontSize: 12,
+  },
+  coordinatesText: {
+    fontSize: 11,
+    color: marketplaceColors.inkMuted,
+    marginTop: 4,
   },
   passwordRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 10,
-    marginBottom: 8,
+    gap: 8,
   },
   passwordInput: {
     flex: 1,
-    height: 42,
-    borderRadius: 8,
+  },
+  eyeButton: {
+    padding: 8,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F7FAF0',
     borderWidth: 1,
     borderColor: '#DDE6D6',
-    backgroundColor: '#F7FAF0',
-    paddingHorizontal: 12,
-    fontSize: 13,
-    color: '#101710',
+    borderRadius: 8,
+    width: 44,
   },
   docTitle: {
     fontSize: 16,
