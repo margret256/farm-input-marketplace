@@ -6,11 +6,16 @@ import { Alert, Image, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput
 
 import { AppScreen, StaticScreen } from '@/components/marketplace/AppScreen';
 import { FloatingTabBar } from '@/components/marketplace/FloatingTabBar';
+import { DealerFloatingTabBar } from '@/components/marketplace/DealerFloatingTabBar';
 import { appImages } from '@/constants/mock-marketplace';
 import { marketplaceColors, marketplaceShadows } from '@/constants/marketplace';
 import { useAuthStore } from '@/store/auth.store';
 
-export function ProfileScreen() {
+type ProfileScreenProps = {
+  role?: 'dealer' | 'farmer';
+};
+
+export function ProfileScreen({ role = 'farmer' }: ProfileScreenProps) {
   const user = useAuthStore((state) => state.user);
   const profileImage = useAuthStore((state) => state.profileImage);
   const setProfileImage = useAuthStore((state) => state.setProfileImage);
@@ -49,9 +54,28 @@ export function ProfileScreen() {
     Alert.alert('Profile Updated', 'Your profile has been updated successfully.');
   }
 
+  const isDealer = role === 'dealer';
+  const profileTitle = isDealer ? 'AgroConnect' : 'AgroMarket';
+  const userRole = isDealer ? 'Verified Dealer' : 'Verified Farmer';
+  const editFields = isDealer
+    ? [
+        { label: 'Business Name', value: fullName, onChange: setFullName },
+        { label: 'Phone Number', value: phone, onChange: setPhone },
+        { label: 'Email Address', value: email, onChange: setEmail },
+        { label: 'Business Location', value: location, onChange: setLocation },
+      ]
+    : [
+        { label: 'Full Name', value: fullName, onChange: setFullName },
+        { label: 'Phone Number', value: phone, onChange: setPhone },
+        { label: 'Email Address', value: email, onChange: setEmail },
+        { label: 'Location', value: location, onChange: setLocation },
+        { label: 'Farm Type', value: farmType, onChange: setFarmType },
+        { label: 'Farm Size', value: farmSize, onChange: setFarmSize },
+      ];
+
   return (
     <StaticScreen>
-      <AppScreen title="AgroMarket">
+      <AppScreen title={profileTitle}>
         {/* Hero banner */}
         <View style={styles.heroBanner}>
           <View style={styles.avatarWrap}>
@@ -63,7 +87,7 @@ export function ProfileScreen() {
         </View>
 
         <Text style={styles.name}>{fullName}</Text>
-        <Text style={styles.meta}>Verified Farmer • {location}</Text>
+        <Text style={styles.meta}>{userRole} • {location}</Text>
 
         {/* Personal Information */}
         <View style={[styles.section, marketplaceShadows.card]}>
@@ -85,31 +109,33 @@ export function ProfileScreen() {
           </View>
         </View>
 
-        {/* Farm Information */}
-        <View style={[styles.section, marketplaceShadows.card]}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="leaf-outline" size={16} color={marketplaceColors.primaryDark} />
-            <Text style={styles.sectionTitle}>Farm Information</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Farm type</Text>
-            <Text style={styles.infoValue}>{farmType}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Farm size</Text>
-            <Text style={styles.infoValue}>{farmSize}</Text>
-          </View>
-          <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Crops grown</Text>
-            <View style={styles.tagRow}>
-              {['Maize', 'Beans', 'Cassava'].map((crop) => (
-                <View key={crop} style={styles.tag}>
-                  <Text style={styles.tagText}>{crop}</Text>
-                </View>
-              ))}
+        {/* Farm/Business Information */}
+        {!isDealer && (
+          <View style={[styles.section, marketplaceShadows.card]}>
+            <View style={styles.sectionHeader}>
+              <Ionicons name="leaf-outline" size={16} color={marketplaceColors.primaryDark} />
+              <Text style={styles.sectionTitle}>Farm Information</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Farm type</Text>
+              <Text style={styles.infoValue}>{farmType}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Farm size</Text>
+              <Text style={styles.infoValue}>{farmSize}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoLabel}>Crops grown</Text>
+              <View style={styles.tagRow}>
+                {['Maize', 'Beans', 'Cassava'].map((crop) => (
+                  <View key={crop} style={styles.tag}>
+                    <Text style={styles.tagText}>{crop}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
           </View>
-        </View>
+        )}
 
         {/* Account Settings */}
         <View style={[styles.section, marketplaceShadows.card]}>
@@ -160,14 +186,7 @@ export function ProfileScreen() {
           <Text style={styles.modalTitle}>Edit Profile</Text>
 
           <ScrollView showsVerticalScrollIndicator={false}>
-            {[
-              { label: 'Full Name', value: fullName, onChange: setFullName },
-              { label: 'Phone Number', value: phone, onChange: setPhone },
-              { label: 'Email Address', value: email, onChange: setEmail },
-              { label: 'Location', value: location, onChange: setLocation },
-              { label: 'Farm Type', value: farmType, onChange: setFarmType },
-              { label: 'Farm Size', value: farmSize, onChange: setFarmSize },
-            ].map((field) => (
+            {editFields.map((field) => (
               <View key={field.label} style={styles.fieldWrap}>
                 <Text style={styles.fieldLabel}>{field.label}</Text>
                 <TextInput
@@ -189,7 +208,11 @@ export function ProfileScreen() {
         </View>
       </Modal>
 
-      <FloatingTabBar active="profile" />
+      {isDealer ? (
+        <DealerFloatingTabBar active="profile" />
+      ) : (
+        <FloatingTabBar active="profile" />
+      )}
     </StaticScreen>
   );
 }
