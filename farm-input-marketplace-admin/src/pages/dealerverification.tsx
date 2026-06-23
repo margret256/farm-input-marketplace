@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
+// pages/DealerVerification.tsx
+import { useEffect, useMemo, useState, useRef } from 'react';
 import {
   MapPin,
   FileText,
@@ -12,6 +13,8 @@ import {
   Phone,
   Mail,
 } from 'lucide-react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 
 import {
   approveDealer,
@@ -19,6 +22,14 @@ import {
   rejectDealer,
   type DealerApplication,
 } from '../api/dealers';
+
+// Fix Leaflet default marker icons
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+});
 
 type DealerAction = 'Approved' | 'Rejected' | 'Info Requested';
 type ActionDone = Partial<Record<string, DealerAction | null>>;
@@ -42,6 +53,154 @@ function formatStatus(status: DealerApplication['verificationStatus']) {
 function formatYear(value: string) {
   const year = new Date(value).getFullYear();
   return Number.isNaN(year) ? 'New' : String(year);
+}
+
+// Geocode function to convert address to coordinates
+async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}&limit=1`
+    );
+    const data = await response.json();
+    if (data && data.length > 0) {
+      return {
+        lat: parseFloat(data[0].lat),
+        lng: parseFloat(data[0].lon),
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Geocoding error:', error);
+    return null;
+  }
+}
+
+// Map Component
+function DealerMap({ address, dealerName }: { address: string; dealerName: string }) {
+  const mapRef = useRef<HTMLDivElement>(null);
+  const mapInstanceRef = useRef<L.Map | null>(null);
+  const markerRef = useRef<L.Marker | null>(null);
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function getCoordinates() {
+      if (!address) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const coords = await geocodeAddress(address);
+        if (isMounted) {
+          if (coords) {
+            setCoordinates(coords);
+            setError(null);
+          } else {
+            setError('Location not found');
+          }
+          setLoading(false);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError('Failed to load location');
+          setLoading(false);
+        }
+      }
+    }
+
+    getCoordinates();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [address]);
+
+  useEffect(() => {
+    if (!mapRef.current || !coordinates || mapInstanceRef.current) return;
+
+    // Initialize map
+    const map = L.map(mapRef.current, {
+      center: [coordinates.lat, coordinates.lng],
+      zoom: 15,
+      zoomControl: true,
+    });
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(map);
+
+    // Add marker
+    const marker = L.marker([coordinates.lat, coordinates.lng])
+      .addTo(map)
+      .bindPopup(`<strong>${dealerName}</strong><br />${address}`);
+
+    markerRef.current = marker;
+    mapInstanceRef.current = map;
+
+    // Add a small delay to ensure map renders correctly
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+
+    // Cleanup function
+    return () => {
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+        markerRef.current = null;
+      }
+    };
+  }, [coordinates, address, dealerName]);
+
+  // Update map when coordinates change
+  useEffect(() => {
+    if (mapInstanceRef.current && coordinates) {
+      mapInstanceRef.current.setView([coordinates.lat, coordinates.lng], 15);
+      if (markerRef.current) {
+        markerRef.current.setLatLng([coordinates.lat, coordinates.lng]);
+        markerRef.current.setPopupContent(`<strong>${dealerName}</strong><br />${address}`);
+      }
+    }
+  }, [coordinates, address, dealerName]);
+
+  if (loading) {
+    return (
+      <div className="map-preview" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <p style={{ color: '#fff' }}>Loading map...</p>
+      </div>
+    );
+  }
+
+  if (error || !coordinates) {
+    return (
+      <div className="map-preview" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+        <MapPin size={36} color="#fff" />
+        <p style={{ color: '#fff', marginTop: '10px', textAlign: 'center' }}>
+          {error || 'Location not available'}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div 
+      ref={mapRef} 
+      className="map-container" 
+      style={{ 
+        width: '100%', 
+        height: '300px', 
+        borderRadius: '8px',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+    />
+  );
 }
 
 export default function DealerVerification() {
@@ -273,9 +432,10 @@ export default function DealerVerification() {
             <h3 className="section-title" style={{ marginBottom: 14 }}>
               Primary Branch
             </h3>
-            <div className="map-preview">
-              <MapPin size={36} color="#fff" />
-            </div>
+            <DealerMap 
+              address={currentSelected.location} 
+              dealerName={currentSelected.businessName} 
+            />
             <p className="branch-address">{currentSelected.location}</p>
           </div>
 
@@ -318,7 +478,7 @@ export default function DealerVerification() {
             Verification Actions
           </h3>
 
-{actionDone[currentSelected.id] ? (
+          {actionDone[currentSelected.id] ? (
             <div
               style={{
                 background: doneBg(actionDone[currentSelected.id]),
@@ -384,7 +544,7 @@ export default function DealerVerification() {
 
           <div className="dealer-sidebar-list">
             <p className="sidebar-list-heading">
-            {filterStatus === 'ALL' ? 'All Dealers' : `${filterStatus.charAt(0) + filterStatus.slice(1).toLowerCase()} Dealers`}
+              {filterStatus === 'ALL' ? 'All Dealers' : `${filterStatus.charAt(0) + filterStatus.slice(1).toLowerCase()} Dealers`}
             </p>
             {dealers.map((dealer) => (
               <button

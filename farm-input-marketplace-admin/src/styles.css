@@ -2580,3 +2580,400 @@ tr:last-child td {
     grid-column: 2;
   }
 }
+
+/* Add these styles to your existing CSS file */
+
+/* ====================
+   LOGOUT MODAL STYLES
+   ==================== */
+
+/* Overlay */
+.logout-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.25s ease;
+  padding: 20px;
+}
+
+/* Modal Container */
+.logout-modal {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 40px 36px 32px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: slideUp 0.3s ease;
+}
+
+/* Close Button */
+.modal-close-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #9ca3af;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Modal Icon */
+.modal-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  width: 72px;
+  height: 72px;
+  background: #FEF2F2;
+  border-radius: 50%;
+  color: #EF4444;
+}
+
+.modal-icon svg {
+  width: 36px;
+  height: 36px;
+}
+
+/* Modal Title */
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+  margin: 0 0 8px;
+}
+
+/* Modal Description */
+.modal-description {
+  font-size: 15px;
+  color: #6B7280;
+  text-align: center;
+  margin: 0 0 28px;
+  line-height: 1.6;
+}
+
+/* Modal Actions */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* Modal Buttons */
+.modal-btn {
+  padding: 10px 32px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-family: inherit;
+  min-width: 120px;
+}
+
+/* Cancel Button */
+.modal-btn.cancel-btn {
+  background: #F3F4F6;
+  color: #374151;
+}
+
+.modal-btn.cancel-btn:hover {
+  background: #E5E7EB;
+}
+
+/* Logout Button */
+.modal-btn.logout-btn {
+  background: #EF4444;
+  color: #FFFFFF;
+}
+
+.modal-btn.logout-btn:hover {
+  background: #DC2626;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ====================
+   SIDEBAR LOGOUT BUTTON
+   ==================== */
+
+.nav-button.logout-btn {
+  margin-top: auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding-top: 14px;
+  margin-top: 8px;
+  color: #EF4444;
+}
+
+.nav-button.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: #DC2626;
+}
+
+.nav-button.logout-btn svg {
+  color: #EF4444;
+}
+
+.nav-button.logout-btn:hover svg {
+  color: #DC2626;
+}
+
+/* ====================
+   TOPBAR LOGOUT BUTTON
+   ==================== */
+
+.icon-button.logout-topbar {
+  color: #6B7280;
+  transition: all 0.2s;
+  border-radius: 8px;
+}
+
+.icon-button.logout-topbar:hover {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+/* ====================
+   RESPONSIVE - LOGOUT MODAL
+   ==================== */
+
+@media (max-width: 768px) {
+  .logout-modal {
+    padding: 32px 24px 28px;
+    max-width: 380px;
+  }
+
+  .modal-btn {
+    padding: 10px 24px;
+    font-size: 14px;
+    min-width: 100px;
+  }
+
+  .modal-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .modal-icon svg {
+    width: 32px;
+    height: 32px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+
+  .modal-description {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logout-modal {
+    padding: 28px 20px 24px;
+    max-width: 340px;
+    border-radius: 14px;
+  }
+
+  .modal-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 12px;
+  }
+
+  .modal-icon svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .modal-description {
+    font-size: 13px;
+    margin-bottom: 22px;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .modal-btn {
+    width: 100%;
+    padding: 12px;
+    justify-content: center;
+    min-width: unset;
+  }
+
+  .modal-close-btn {
+    top: 8px;
+    right: 8px;
+    padding: 4px;
+  }
+
+  .modal-close-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 360px) {
+  .logout-modal {
+    padding: 24px 16px 20px;
+    max-width: 300px;
+  }
+
+  .modal-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .modal-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .modal-title {
+    font-size: 16px;
+  }
+
+  .modal-description {
+    font-size: 12px;
+  }
+}
+
+/* ====================
+   LOGOUT BUTTON STYLES (Sidebar)
+   ==================== */
+
+.sidebar .nav-button.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  height: 46px;
+  width: 100%;
+  border-radius: 8px;
+  background: transparent;
+  color: #EF4444;
+  font-weight: 700;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sidebar .nav-button.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: #DC2626;
+}
+
+.sidebar .nav-button.logout-btn svg {
+  flex-shrink: 0;
+  color: #EF4444;
+}
+
+.sidebar .nav-button.logout-btn:hover svg {
+  color: #DC2626;
+}
+
+/* ====================
+   LOGOUT BUTTON STYLES (Topbar)
+   ==================== */
+
+.topbar-actions .logout-topbar {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: #6B7280;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.topbar-actions .logout-topbar:hover {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.topbar-actions .logout-topbar svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* ====================
+   ADDITIONAL UTILITY
+   ==================== */
+
+/* Ensure modal is above everything */
+.logout-modal-overlay {
+  z-index: 9999;
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Optional: Add a subtle glow to the logout button */
+.nav-button.logout-btn {
+  position: relative;
+}
+
+.nav-button.logout-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.nav-button.logout-btn:hover::before {
+  opacity: 1;
+}

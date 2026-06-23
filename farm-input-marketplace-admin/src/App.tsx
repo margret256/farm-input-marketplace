@@ -1,3 +1,4 @@
+// App.tsx
 import { useEffect, useMemo, useState } from 'react';
 import {
   BarChart3,
@@ -9,6 +10,8 @@ import {
   ShieldCheck,
   UserCircle,
   Users,
+  LogOut,
+  X,
 } from 'lucide-react';
 
 import Dashboard from './pages/dashboard';
@@ -18,6 +21,8 @@ import Transactions from './pages/transcations';
 import Analytics from './pages/Analytics';
 import Profile from './pages/Profile';
 import About from './pages/About';
+import AdminLogin from './pages/login';
+import { auth } from './api/client';
 
 const navItems = [
   { id: 'dashboard',    label: 'Dashboard',    icon: Home        },
@@ -47,15 +52,62 @@ function getInitialPage(): PageId {
   return navItems.some((item) => item.id === fromHash) ? (fromHash as PageId) : 'dashboard';
 }
 
+// Check if user is authenticated
+function isAuthenticated(): boolean {
+  const token = localStorage.getItem('accessToken');
+  const userStr = localStorage.getItem('user');
+  
+  if (!token || !userStr) return false;
+  
+  try {
+    const user = JSON.parse(userStr);
+    return user.role === 'ADMIN';
+  } catch {
+    return false;
+  }
+}
+
 function App() {
-  const [activePage,  setActivePage]  = useState<PageId>(getInitialPage);
+  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated);
+  const [activePage, setActivePage] = useState<PageId>(getInitialPage);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   useEffect(() => {
     const handleHash = () => setActivePage(getInitialPage());
     window.addEventListener('hashchange', handleHash);
     return () => window.removeEventListener('hashchange', handleHash);
   }, []);
+
+  // Handle login
+  const handleLogin = (token: string, user: any) => {
+    localStorage.setItem('accessToken', token);
+    localStorage.setItem('user', JSON.stringify(user));
+    setIsLoggedIn(true);
+    window.location.hash = 'dashboard';
+    setActivePage('dashboard');
+  };
+
+  // Handle logout - clears session and redirects to login
+  const handleLogout = () => {
+    // Clear all session data
+    auth.logout();
+    
+    // Update state
+    setIsLoggedIn(false);
+    setActivePage('dashboard');
+    
+    // Clear hash to prevent redirect issues
+    window.location.hash = '';
+    
+    // Close modal
+    setShowLogoutModal(false);
+  };
+
+  // If not logged in, show login page
+  if (!isLoggedIn) {
+    return <AdminLogin onLogin={handleLogin} />;
+  }
 
   const Page = useMemo(() => {
     const pages: Record<PageId, React.ComponentType<any>> = {
@@ -77,18 +129,68 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
-      <Sidebar activePage={activePage} isOpen={sidebarOpen} onNavigate={navigate} />
-      {sidebarOpen ? (
-        <button className="scrim" aria-label="Close navigation" onClick={() => setSidebarOpen(false)} />
-      ) : null}
-      <main className="main-area">
-        <TopBar title={pageTitles[activePage]} onMenu={() => setSidebarOpen(true)} />
-        <div className="content-wrap">
-          <Page onNavigate={navigate} />
+    <>
+      <div className="app-shell">
+        <Sidebar 
+          activePage={activePage} 
+          isOpen={sidebarOpen} 
+          onNavigate={navigate} 
+          onLogoutClick={() => setShowLogoutModal(true)}
+        />
+        {sidebarOpen ? (
+          <button className="scrim" aria-label="Close navigation" onClick={() => setSidebarOpen(false)} />
+        ) : null}
+        <main className="main-area">
+          <TopBar 
+            title={pageTitles[activePage]} 
+            onMenu={() => setSidebarOpen(true)} 
+            onLogoutClick={() => setShowLogoutModal(true)}
+          />
+          <div className="content-wrap">
+            <Page onNavigate={navigate} />
+          </div>
+        </main>
+        <MobileNav activePage={activePage} onNavigate={navigate} />
+      </div>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <LogoutModal 
+          onConfirm={handleLogout}
+          onCancel={() => setShowLogoutModal(false)}
+        />
+      )}
+    </>
+  );
+}
+
+// Logout Modal Component
+function LogoutModal({ onConfirm, onCancel }: { onConfirm: () => void; onCancel: () => void }) {
+  return (
+    <div className="logout-modal-overlay" onClick={onCancel}>
+      <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close-btn" onClick={onCancel}>
+          <X size={20} />
+        </button>
+        
+        <div className="modal-icon">
+          <LogOut size={48} />
         </div>
-      </main>
-      <MobileNav activePage={activePage} onNavigate={navigate} />
+        
+        <h3 className="modal-title">Logout?</h3>
+        <p className="modal-description">
+          Are you sure you want to log out of your account?
+        </p>
+        
+        <div className="modal-actions">
+          <button className="modal-btn cancel-btn" onClick={onCancel}>
+            Cancel
+          </button>
+          <button className="modal-btn logout-btn" onClick={onConfirm}>
+            Logout
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -97,11 +199,15 @@ function Sidebar({
   activePage,
   isOpen,
   onNavigate,
+  onLogoutClick,
 }: {
   activePage: PageId;
   isOpen: boolean;
   onNavigate: NavigateHandler;
+  onLogoutClick: () => void;
 }) {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
   return (
     <aside className={`sidebar ${isOpen ? 'is-open' : ''}`}>
       <div className="brand-block">
@@ -127,12 +233,21 @@ function Sidebar({
             </button>
           );
         })}
+        {/* Logout button in sidebar */}
+        <button
+          className="nav-button logout-btn"
+          type="button"
+          onClick={onLogoutClick}
+        >
+          <LogOut size={20} />
+          <span>Logout</span>
+        </button>
       </nav>
       <div className="sidebar-footer">
-        <div className="mini-avatar">HC</div>
+        <div className="mini-avatar">{user.firstName?.[0] || 'A'}</div>
         <div>
-          <strong>Harvester Co.</strong>
-          <span>Verified Admin</span>
+          <strong>{user.firstName || 'Admin'}</strong>
+          <span>{user.role || 'Administrator'}</span>
         </div>
       </div>
     </aside>
@@ -168,7 +283,9 @@ function MobileNav({
   );
 }
 
-function TopBar({ title, onMenu }: { title: string; onMenu: () => void }) {
+function TopBar({ title, onMenu, onLogoutClick }: { title: string; onMenu: () => void; onLogoutClick: () => void }) {
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+
   return (
     <header className="topbar">
       <button className="icon-button menu-button" type="button" aria-label="Open navigation" onClick={onMenu}>
@@ -183,7 +300,16 @@ function TopBar({ title, onMenu }: { title: string; onMenu: () => void }) {
           <Bell size={21} />
           <span className="notification-dot" />
         </button>
-        <div className="top-avatar">H</div>
+        <button 
+          className="icon-button logout-topbar" 
+          type="button" 
+          aria-label="Logout"
+          onClick={onLogoutClick}
+          title="Logout"
+        >
+          <LogOut size={21} />
+        </button>
+        <div className="top-avatar">{user.firstName?.[0] || 'A'}</div>
       </div>
     </header>
   );
