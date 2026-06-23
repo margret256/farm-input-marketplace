@@ -1,3 +1,6 @@
-import { DealerProfileScreen } from '@/screens/dealer/DealerProfileScreen';
+import { ProfileScreen } from '@/screens/profile/ProfileScreen';
 
-export default DealerProfileScreen;
+export default function DealerProfilePage() {
+  return <ProfileScreen role="dealer" />;
+}
+
