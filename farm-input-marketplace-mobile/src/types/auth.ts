@@ -9,6 +9,11 @@ export type AuthUser = {
   phone: string;
   role: UserRole;
   status: UserStatus;
+  dealer?: {
+    id: string;
+    businessName: string;
+    verificationStatus: 'PENDING' | 'APPROVED' | 'REJECTED';
+  };
 };
 
 export type RegisterPayload = {
