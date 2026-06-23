@@ -1,12 +1,134 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import {
+  ActivityIndicator,
+  Alert,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import {
+  createProduct,
+  listProductCategories,
+  type ProductCategory,
+} from '@/api/products';
 import { AppHeader } from '@/components/marketplace/AppHeader';
 import { DealerFloatingTabBar } from '@/components/marketplace/DealerFloatingTabBar';
 import { marketplaceColors } from '@/constants/marketplace';
+import { useAuthStore } from '@/store/auth.store';
+import { getApiErrorMessage } from '@/utils/api-error';
+
+const fallbackCategories: ProductCategory[] = [
+  { id: 'Seeds', name: 'Seeds' },
+  { id: 'Fertilizer', name: 'Fertilizer' },
+  { id: 'Pesticides', name: 'Pesticides' },
+  { id: 'Equipment', name: 'Equipment' },
+  { id: 'Soil', name: 'Soil' },
+  { id: 'Other', name: 'Other' },
+];
 
 export function AddProductScreen() {
+  const user = useAuthStore((state) => state.user);
+  const [categories, setCategories] = useState<ProductCategory[]>(fallbackCategories);
+  const [selectedCategory, setSelectedCategory] = useState<ProductCategory | undefined>();
+  const [showCategoryDropdown, setShowCategoryDropdown] = useState(false);
+  const [productName, setProductName] = useState('');
+  const [price, setPrice] = useState('');
+  const [quantity, setQuantity] = useState(100);
+  const [description, setDescription] = useState('');
+  const [loadingCategories, setLoadingCategories] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function loadCategories() {
+      try {
+        setLoadingCategories(true);
+        const nextCategories = await listProductCategories();
+        if (mounted && nextCategories.length > 0) {
+          setCategories(nextCategories);
+        }
+      } catch {
+        if (mounted) {
+          setCategories(fallbackCategories);
+        }
+      } finally {
+        if (mounted) {
+          setLoadingCategories(false);
+        }
+      }
+    }
+
+    loadCategories();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  function resetForm() {
+    setProductName('');
+    setSelectedCategory(undefined);
+    setPrice('');
+    setQuantity(100);
+    setDescription('');
+    setShowCategoryDropdown(false);
+  }
+
+  async function handlePublish() {
+    const dealerId = user?.dealer?.id;
+    const userId = user?.id;
+    const numericPrice = Number(price.replace(/,/g, '').trim());
+    const name = productName.trim();
+    const details = description.trim();
+
+    if (!dealerId && !userId) {
+      Alert.alert('Missing account', 'Log in as a dealer before adding products.');
+      return;
+    }
+
+    if (!name || !selectedCategory || !price.trim() || !details) {
+      Alert.alert('Missing details', 'Fill in product name, category, price, and description.');
+      return;
+    }
+
+    if (!Number.isFinite(numericPrice) || numericPrice <= 0) {
+      Alert.alert('Invalid price', 'Enter a valid product price.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      const product = await createProduct({
+        dealerId,
+        userId: dealerId ? undefined : userId,
+        categoryId:
+          selectedCategory.id !== selectedCategory.name ? selectedCategory.id : undefined,
+        categoryName: selectedCategory.name,
+        name,
+        description: details,
+        price: numericPrice,
+        stock: quantity,
+      });
+
+      resetForm();
+      Alert.alert('Product published', `${product.name} is now in your inventory.`, [
+        { text: 'View inventory', onPress: () => router.replace('/dealer/inventory') },
+      ]);
+    } catch (error) {
+      Alert.alert('Could not publish product', getApiErrorMessage(error, 'Try again in a moment.'));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   return (
     <SafeAreaView style={styles.screen}>
        <AppHeader title="AgroConnect" hideActions={true} />
@@ -63,16 +185,42 @@ export function AddProductScreen() {
               style={styles.fieldInput}
               placeholder="e.g. Premium Grade Hybrid Maize"
               placeholderTextColor="#BCBCBC"
+              value={productName}
+              onChangeText={setProductName}
             />
           </View>
 
           {/* Category */}
           <View style={styles.fieldWrap}>
             <Text style={styles.fieldLabel}>CATEGORY</Text>
-            <Pressable style={styles.selectInput}>
-              <Text style={styles.selectText}>Select Category</Text>
+            <Pressable
+              style={styles.selectInput}
+              onPress={() => setShowCategoryDropdown((value) => !value)}
+              disabled={loadingCategories}
+            >
+              <Text style={[styles.selectText, selectedCategory && styles.selectTextActive]}>
+                {loadingCategories
+                  ? 'Loading categories...'
+                  : selectedCategory?.name ?? 'Select Category'}
+              </Text>
               <Ionicons name="chevron-down" size={18} color={marketplaceColors.inkMuted} />
             </Pressable>
+            {showCategoryDropdown && (
+              <View style={styles.dropdown}>
+                {categories.map((category) => (
+                  <Pressable
+                    key={category.id}
+                    style={styles.dropdownItem}
+                    onPress={() => {
+                      setSelectedCategory(category);
+                      setShowCategoryDropdown(false);
+                    }}
+                  >
+                    <Text style={styles.dropdownItemText}>{category.name}</Text>
+                  </Pressable>
+                ))}
+              </View>
+            )}
           </View>
 
           {/* Price */}
@@ -85,6 +233,8 @@ export function AddProductScreen() {
                 placeholder="0.00"
                 placeholderTextColor="#BCBCBC"
                 keyboardType="numeric"
+                value={price}
+                onChangeText={setPrice}
               />
             </View>
           </View>
@@ -93,11 +243,17 @@ export function AddProductScreen() {
           <View style={styles.fieldWrap}>
             <Text style={styles.fieldLabel}>QUANTITY AVAILABLE</Text>
             <View style={styles.qtyRow}>
-              <Pressable style={styles.qtyBtn}>
+              <Pressable
+                style={styles.qtyBtn}
+                onPress={() => setQuantity((value) => Math.max(0, value - 1))}
+              >
                 <Ionicons name="remove" size={20} color={marketplaceColors.primaryDark} />
               </Pressable>
-              <Text style={styles.qtyValue}>100</Text>
-              <Pressable style={styles.qtyBtn}>
+              <Text style={styles.qtyValue}>{quantity}</Text>
+              <Pressable
+                style={styles.qtyBtn}
+                onPress={() => setQuantity((value) => value + 1)}
+              >
                 <Ionicons name="add" size={20} color={marketplaceColors.primaryDark} />
               </Pressable>
             </View>
@@ -114,11 +270,31 @@ export function AddProductScreen() {
             multiline
             numberOfLines={5}
             textAlignVertical="top"
+            maxLength={1000}
+            value={description}
+            onChangeText={setDescription}
           />
           <View style={styles.descFooter}>
             <Text style={styles.descTip}>Helpful tip: Detailed descriptions increase buyer trust by 40%.</Text>
-            <Text style={styles.descCount}>0 / 1000</Text>
+            <Text style={styles.descCount}>{description.length} / 1000</Text>
           </View>
+        </View>
+
+        <View style={styles.actionRow}>
+          <Pressable
+            style={[styles.publishButton, submitting && styles.disabledButton]}
+            onPress={handlePublish}
+            disabled={submitting}
+          >
+            {submitting ? (
+              <ActivityIndicator color="#FFFFFF" />
+            ) : (
+              <>
+                <Ionicons name="rocket-outline" size={18} color="#FFFFFF" />
+                <Text style={styles.publishText}>Publish Product</Text>
+              </>
+            )}
+          </Pressable>
         </View>
 
        </ScrollView>
